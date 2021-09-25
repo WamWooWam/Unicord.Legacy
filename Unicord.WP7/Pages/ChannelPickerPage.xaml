@@ -1,0 +1,106 @@
+﻿<local:UnicordPage 
+    x:Class="Unicord.WP7.Pages.ChannelPickerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Unicord.WP7"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:converters="clr-namespace:Unicord.WP7.Converters"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="True">
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+
+    <local:UnicordPage.Resources>
+        <converters:LowerCaseConverter x:Key="LowerCaseConverter" />
+        <converters:UpperCaseConverter x:Key="UpperCaseConverter" />
+        <converters:ChannelCaseConverter x:Key="ChannelCaseConverter" />
+    </local:UnicordPage.Resources>
+
+    <Grid x:Name="LayoutRoot" Background="Transparent" DataContext="{Binding Guild}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,0">
+            <Viewbox Width="110" Margin="12,0,0,0" HorizontalAlignment="Left" CacheMode="BitmapCache">
+                <Path Height="120" Fill="{StaticResource PhoneForegroundBrush}" Data="{StaticResource UnicordLogoPath}" />
+            </Viewbox>
+            <TextBlock Text="{Binding Name, FallbackValue='server name', Converter={StaticResource LowerCaseConverter}}" Margin="12,0,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,0,0">
+            <ListBox ItemsSource="{Binding RawChannels}"
+                     HorizontalContentAlignment="Left"
+                     SelectionChanged="LongListSelector_SelectionChanged"
+                     Padding="0,12,0,0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <converters:ChannelTypeTemplateSelector HorizontalAlignment="Stretch" 
+                                                                HorizontalContentAlignment="Left" 
+                                                                Content="{Binding}"
+                                                                CacheMode="BitmapCache"
+                                                                toolkit:TiltEffect.IsTiltEnabled="True">
+                            <converters:ChannelTypeTemplateSelector.CategoryTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name, Converter={StaticResource ChannelCaseConverter}}"
+                                               Foreground="{StaticResource PhoneAccentBrush}"
+                                               Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                                               VerticalAlignment="Bottom"
+                                               Margin="12,0,0,4"/>
+                                </DataTemplate>
+                            </converters:ChannelTypeTemplateSelector.CategoryTemplate>
+                            <converters:ChannelTypeTemplateSelector.TextChannelTemplate>
+                                <DataTemplate>
+                                    <StackPanel Height="80" Margin="0,-12,0,12" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Name, Converter={StaticResource ChannelCaseConverter}}" Style="{StaticResource PhoneTextExtraLargeStyle}" />
+                                        <TextBlock Text="{Binding Topic, TargetNullValue='no topic set', Converter={StaticResource LowerCaseConverter}}" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,-4,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </converters:ChannelTypeTemplateSelector.TextChannelTemplate>
+                            <converters:ChannelTypeTemplateSelector.VoiceChannelTemplate>
+                                <DataTemplate>
+                                    <StackPanel Height="80" Margin="0,-12,0,12" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Name, Converter={StaticResource ChannelCaseConverter}}" Style="{StaticResource PhoneTextExtraLargeStyle}" />
+                                        <TextBlock Text="voice channel" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,-4,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </converters:ChannelTypeTemplateSelector.VoiceChannelTemplate>
+                        </converters:ChannelTypeTemplateSelector>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+
+</local:UnicordPage>

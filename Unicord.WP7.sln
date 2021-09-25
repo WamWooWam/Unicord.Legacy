@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicord.WP7", "Unicord.WP7\Unicord.WP7.csproj", "{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D4924A7C-F25E-4446-BB57-538B8596EDE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.Crypto", "Libraries\BouncyCastle.Crypto\BouncyCastle.Crypto.csproj", "{307967BA-F11A-4F72-9EF5-300853075AAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordLib", "Libraries\DiscordLib\DiscordLib.csproj", "{E39AECDD-8DDE-4D2C-B5B4-21EFFC47F798}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows.Controls.Markdown", "Libraries\MarkdownTextBlock\System.Windows.Controls.Markdown.csproj", "{0D26A27F-8CBC-4CA5-9D76-56A0DFFF19B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocket4Net", "Libraries\WebSocket4Net\WebSocket4Net.csproj", "{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E22AAD0-01EF-4ADE-9486-745AC9F82A6A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{307967BA-F11A-4F72-9EF5-300853075AAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{307967BA-F11A-4F72-9EF5-300853075AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{307967BA-F11A-4F72-9EF5-300853075AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{307967BA-F11A-4F72-9EF5-300853075AAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E39AECDD-8DDE-4D2C-B5B4-21EFFC47F798}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E39AECDD-8DDE-4D2C-B5B4-21EFFC47F798}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E39AECDD-8DDE-4D2C-B5B4-21EFFC47F798}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E39AECDD-8DDE-4D2C-B5B4-21EFFC47F798}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D26A27F-8CBC-4CA5-9D76-56A0DFFF19B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D26A27F-8CBC-4CA5-9D76-56A0DFFF19B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D26A27F-8CBC-4CA5-9D76-56A0DFFF19B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D26A27F-8CBC-4CA5-9D76-56A0DFFF19B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{307967BA-F11A-4F72-9EF5-300853075AAB} = {D4924A7C-F25E-4446-BB57-538B8596EDE4}
+		{E39AECDD-8DDE-4D2C-B5B4-21EFFC47F798} = {D4924A7C-F25E-4446-BB57-538B8596EDE4}
+		{0D26A27F-8CBC-4CA5-9D76-56A0DFFF19B8} = {D4924A7C-F25E-4446-BB57-538B8596EDE4}
+		{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F} = {D4924A7C-F25E-4446-BB57-538B8596EDE4}
+	EndGlobalSection
+EndGlobal

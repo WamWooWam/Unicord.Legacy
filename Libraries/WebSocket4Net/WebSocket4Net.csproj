@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{84BB9ADC-A722-4E87-A259-4EFA7B6AB95F}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebSocket4Net</RootNamespace>
+    <AssemblyName>WebSocket4Net</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;NO_SPINWAIT_CLASS</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\deps\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ProtoBase, Version=1.7.0.17, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\deps\SuperSocket.ProtoBase.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="mscorlib.extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClosedEventArgs.cs" />
+    <Compile Include="Command\BadRequest.cs" />
+    <Compile Include="Command\Binary.cs" />
+    <Compile Include="Command\Close.cs" />
+    <Compile Include="Command\Handshake.cs" />
+    <Compile Include="Command\Ping.cs" />
+    <Compile Include="Command\Pong.cs" />
+    <Compile Include="Command\Text.cs" />
+    <Compile Include="Command\WebSocketCommandBase.cs" />
+    <Compile Include="Common\ArraySegmentEx.cs" />
+    <Compile Include="Common\ArraySegmentList.cs" />
+    <Compile Include="Common\BinaryCommandInfo.cs" />
+    <Compile Include="Common\CommandInfo.cs" />
+    <Compile Include="Common\DelegateCommand.cs" />
+    <Compile Include="Common\IClientCommandReader.cs" />
+    <Compile Include="Common\ICommand.cs" />
+    <Compile Include="Common\ICommandInfo.cs" />
+    <Compile Include="Common\StringCommandInfo.cs" />
+    <Compile Include="DataReceivedEventArgs.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Extensions.Silverlight.cs" />
+    <Compile Include="IJsonExecutor.cs" />
+    <Compile Include="JsonExecutor.cs" />
+    <Compile Include="JsonWebSocket.cs" />
+    <Compile Include="JsonWebSocket.JsonNet.cs" />
+    <Compile Include="MD5.cs" />
+    <Compile Include="MD5Managed.cs" />
+    <Compile Include="MessageReceivedEventArgs.cs" />
+    <Compile Include="OpCode.cs" />
+    <Compile Include="Protocol\CloseStatusCodeHybi10.cs" />
+    <Compile Include="Protocol\CloseStatusCodeRfc6455.cs" />
+    <Compile Include="Protocol\DraftHybi00DataReader.cs" />
+    <Compile Include="Protocol\DraftHybi00HandshakeReader.cs" />
+    <Compile Include="Protocol\DraftHybi00Processor.cs" />
+    <Compile Include="Protocol\DraftHybi10DataReader.cs" />
+    <Compile Include="Protocol\DraftHybi10HandshakeReader.cs" />
+    <Compile Include="Protocol\DraftHybi10Processor.cs" />
+    <Compile Include="Protocol\FramePartReader\DataFramePartReader.cs" />
+    <Compile Include="Protocol\FramePartReader\ExtendedLenghtReader.cs" />
+    <Compile Include="Protocol\FramePartReader\FixPartReader.cs" />
+    <Compile Include="Protocol\FramePartReader\IDataFramePartReader.cs" />
+    <Compile Include="Protocol\FramePartReader\MaskKeyReader.cs" />
+    <Compile Include="Protocol\FramePartReader\PayloadDataReader.cs" />
+    <Compile Include="Protocol\HandshakeReader.cs" />
+    <Compile Include="Protocol\ICloseStatusCode.cs" />
+    <Compile Include="Protocol\IProtocolProcessor.cs" />
+    <Compile Include="Protocol\ProtocolProcessorBase.cs" />
+    <Compile Include="Protocol\ProtocolProcessorFactory.cs" />
+    <Compile Include="Protocol\ReaderBase.cs" />
+    <Compile Include="Protocol\Rfc6455Processor.cs" />
+    <Compile Include="Protocol\WebSocketDataFrame.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\ASCIIEncoding.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\ConcurrentBatchQueue.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\ConnectAsyncExtension.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\ConnectAsyncExtension.WindowsPhone.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\Extensions.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\IBatchQueue.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\IProxyConnector.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\NameValueCollection.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\PosList.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\ProxyEventArgs.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\SearchMarkState.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Common\SpinWait.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\AsyncTcpSession.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\ClientSession.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\ConcurrentQueue.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\DataEventArgs.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\ErrorEventArgs.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\IBufferSetter.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\IClientSession.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\NetworkStream.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\SecurityOption.Silverlight.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\SslStream.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\SslStreamTcpSession.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Core\TcpClientSession.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Protocol\AssemblyUtil.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Protocol\DelegateCommand.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Protocol\ICommand.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Proxy\HttpConnectProxy.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Proxy\ProxyConnectorBase.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Proxy\Socks4aConnector.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Proxy\Socks4Connector.cs" />
+    <Compile Include="SuperSocket.ClientEngine\Proxy\Socks5Connector.cs" />
+    <Compile Include="WebSocket.cs" />
+    <Compile Include="WebSocket.Silverlight.cs" />
+    <Compile Include="WebSocketCommandInfo.cs" />
+    <Compile Include="WebSocketContext.cs" />
+    <Compile Include="WebSocketState.cs" />
+    <Compile Include="WebSocketVersion.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SuperSocket.ClientEngine\Common\Common.WP71.csproj" />
+    <Content Include="SuperSocket.ClientEngine\Common\GenericDelegates.cs.txt" />
+    <Content Include="SuperSocket.ClientEngine\Core\Core.WP71.csproj" />
+    <Content Include="SuperSocket.ClientEngine\Protocol\Protocol.WP71.csproj" />
+    <Content Include="SuperSocket.ClientEngine\Proxy\Proxy.WP71.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BouncyCastle.Crypto\BouncyCastle.Crypto.csproj">
+      <Project>{307967BA-F11A-4F72-9EF5-300853075AAB}</Project>
+      <Name>BouncyCastle.Crypto</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
