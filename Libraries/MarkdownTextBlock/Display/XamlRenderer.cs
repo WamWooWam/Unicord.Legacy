@@ -1074,8 +1074,8 @@ namespace System.Windows.Controls.Markdown.Display
             }
             else
             {
-                _root.RenderTransform = new TranslateTransform() { Y = -10 };
-                _root.Margin = new Thickness(0, 0, 0, -4);
+               // _root.RenderTransform = new TranslateTransform() { Y = -10 };
+               // _root.Margin = new Thickness(0, 0, 0, -4);
 
                 var uri = string.Format("https://cdn.discordapp.com/emojis/{0}.png?size=128", element.Id);
                 var size = 32;
@@ -1087,7 +1087,7 @@ namespace System.Windows.Controls.Markdown.Display
                         Source = new BitmapImage(new Uri(uri)),
                         Height = size,
                         MaxWidth = size * 3,
-                        RenderTransform = new TranslateTransform() { Y = 10 }
+                       // RenderTransform = new TranslateTransform() { Y = 10 }
                     }
                 };
                 inlineCollection.Add(ui);
@@ -1251,7 +1251,7 @@ namespace System.Windows.Controls.Markdown.Display
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
                 // IsUndoEnabled = false,
-                AcceptsReturn = false,
+                AcceptsReturn = false,                
                 // AcceptsTab = false
             };
 
@@ -1280,7 +1280,8 @@ namespace System.Windows.Controls.Markdown.Display
                 FontStyle = FontStyle,
                 FontWeight = FontWeight,
                 Foreground = context.Foreground,
-                TextWrapping = TextWrapping
+                TextWrapping = TextWrapping,
+                LineStackingStrategy = LineStackingStrategy.BlockLineHeight
             };
             return result;
         }

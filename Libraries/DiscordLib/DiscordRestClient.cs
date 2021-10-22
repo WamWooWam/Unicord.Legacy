@@ -97,9 +97,9 @@ namespace DiscordLib
             if (values == null || !values.Any())
                 return string.Empty;
 
-            var vals_collection = values.Select(xkvp =>
+            var joinedValues = values.Select(xkvp =>
                 string.Format("{0}={1}", HttpUtility.UrlEncode(xkvp.Key), HttpUtility.UrlEncode(xkvp.Value)));
-            var vals = string.Join("&", vals_collection);
+            var vals = string.Join("&", joinedValues);
 
             return !post ? "?" + vals : vals;
         }

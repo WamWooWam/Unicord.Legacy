@@ -65,19 +65,20 @@ namespace Unicord.WP7
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
-
         }
 
-        public void EnsureDiscordClient()
+        public DiscordClient EnsureDiscordClient()
         {
             if (App.Current.Discord == null)
             {
                 string token;
                 if (!IsolatedStorageSettings.ApplicationSettings.TryGetValue("LoginToken", out token))
-                    return;
+                    return null;
 
                 App.Current.Discord = new DiscordClient(token);
             }
+
+            return App.Current.Discord;
         }
 
         // Code to execute when the application is launching (eg, from Start)

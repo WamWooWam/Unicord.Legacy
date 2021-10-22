@@ -18,16 +18,19 @@ namespace Unicord.WP7.ViewModels
         {
             _syncContext = SynchronizationContext.Current;
 
+            var discord = App.Current.EnsureDiscordClient();
+            if (discord == null) return;
+
             Guilds = new ObservableCollection<GuildViewModel>(
-                App.Current.Discord.Guilds.Values.Select(g => new GuildViewModel(g)));
+                discord.Guilds.Values.Select(g => new GuildViewModel(g)));
 
             DirectMessages = new ObservableCollection<ChannelViewModel>(
-                App.Current.Discord.PrivateChannels.Values
+                discord.PrivateChannels.Values
                     .Where(c => c.Type == ChannelType.Private)
                     .Select(c => new ChannelViewModel(c)));
 
-            App.Current.Discord.Ready += OnReady;
-            App.Current.Discord.GuildCreated += OnGuildCreated;
+            discord.Socket.Ready += OnReady;
+            discord.Socket.GuildCreated += OnGuildCreated;
         }
 
         private Task OnReady()
@@ -89,8 +92,8 @@ namespace Unicord.WP7.ViewModels
         {
             if (App.Current.Discord != null)
             {
-                App.Current.Discord.Ready -= OnReady;
-                App.Current.Discord.GuildCreated -= OnGuildCreated;
+                App.Current.Discord.Socket.Ready -= OnReady;
+                App.Current.Discord.Socket.GuildCreated -= OnGuildCreated;
             }
         }
     }

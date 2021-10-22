@@ -42,7 +42,7 @@ namespace Unicord.WP7
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            IsolatedStorageSettings.ApplicationSettings["LoginToken"] = PasswordTextBox.Password;
+            IsolatedStorageSettings.ApplicationSettings.Add("LoginToken", PasswordTextBox.Password);
 
             App.Current.Discord = new DiscordLib.DiscordClient(PasswordTextBox.Password);
             App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/MainPanorama.xaml", UriKind.Relative));

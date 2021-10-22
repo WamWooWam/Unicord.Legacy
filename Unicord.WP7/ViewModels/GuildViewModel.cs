@@ -26,6 +26,23 @@ namespace Unicord.WP7.ViewModels
 
         public bool IsAvailable { get { return !_guild.IsUnavailable; } }
 
+        public int MentionCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (var item in _guild.Channels.Values)
+                {
+                    ReadState state;
+                    if (!App.Current.Discord.ReadStates.TryGetValue(item.Id, out state)) continue;
+
+                    count += state.MentionCount;
+                }
+
+                return count;
+            }
+        }
+
         public ObservableCollection<ChannelViewModel> Channels { get; set; }
 
         internal void Update(Guild guild)

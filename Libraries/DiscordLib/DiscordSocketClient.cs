@@ -1,5 +1,6 @@
 ﻿using DiscordLib.EventArgs;
-using DiscordLib.Net.Payloads;
+using DiscordLib.Net;
+using DiscordLib.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SuperSocket.ClientEngine;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebSocket4Net;
+using DiscordLib.Net.Payloads;
 
 namespace DiscordLib
 {
@@ -27,6 +29,7 @@ namespace DiscordLib
         private int _skippedHeartbeats;
         private long? _seq;
         private DateTimeOffset _lastHeartbeat;
+        private bool _disconnecting;
 
         private Task _heartbeatTask;
         private CancellationTokenSource _heartbeatCancellation;
@@ -61,7 +64,19 @@ namespace DiscordLib
             _webSocket.Closed += OnSocketClosed;
             _webSocket.Open();
 
-            await _tcs.Task;
+            try { await _tcs.Task; }
+            catch (TaskCanceledException) { }
+        }
+
+        internal Task DisconnectAsync()
+        {
+            _disconnecting = true;
+            _tcs.TrySetCanceled();
+
+            _webSocket.Close(1000, null);
+            _webSocket.Dispose();
+
+            return TaskEx.Delay(0);
         }
 
         private void OnSocketOpened(object sender, System.EventArgs e)
@@ -77,6 +92,12 @@ namespace DiscordLib
         private async void OnSocketClosed(object sender, System.EventArgs e)
         {
             Debug.WriteLine("Socket closed.");
+
+            if (_disconnecting)
+            {
+                _disconnecting = false;
+                return;
+            }
 
             _tcs.TrySetCanceled();
             _heartbeatCancellation.Cancel();
@@ -221,13 +242,13 @@ namespace DiscordLib
                 _client.PrivateChannels.AddOrUpdate(privateChannel.Id, privateChannel, (id, dm) => (PrivateChannel)dm.Update(privateChannel));
             }
 
-            await _client.readyEvent.InvokeAsync();
+            await readyEvent.InvokeAsync();
         }
 
         private async Task HandleResumedAsync(GatewayPayload<object> payload)
         {
             Debug.WriteLine("Session resumed!");
-            await _client.resumedEvent.InvokeAsync();
+            await resumedEvent.InvokeAsync();
         }
 
         private async Task HandleGuildCreateAsync(GatewayPayload<Guild> payload)
@@ -235,7 +256,7 @@ namespace DiscordLib
             var newGuild = payload.Data;
             var result = _client.Guilds.AddOrUpdate(newGuild.Id, newGuild, (id, guild) => guild.Update(newGuild));
 
-            await _client.guildCreatedEvent.InvokeAsync(new GuildCreatedEventArgs(result));
+            await guildCreatedEvent.InvokeAsync(new GuildCreatedEventArgs(result));
         }
 
         private async Task HandleMessageCreateAsync(GatewayPayload<Message> payload)
@@ -245,7 +266,7 @@ namespace DiscordLib
                 _client.messageCache.Add(message);
 
             var ea = new MessageCreateEventArgs() { Message = message, };
-            await this._client.messageCreated.InvokeAsync(ea);
+            await messageCreated.InvokeAsync(ea);
         }
 
         private async Task HandleMessageDeleteAsync(GatewayPayload<MessageDeletePayload> payload)
@@ -264,7 +285,7 @@ namespace DiscordLib
             _client.messageCache.Remove(xm => xm.Id == msg.Id && xm.ChannelId == channelId);
 
             var ea = new MessageDeleteEventArgs() { Message = msg };
-            await _client.messageDeleted.InvokeAsync(ea);
+            await messageDeleted.InvokeAsync(ea);
         }
 
         private async Task SendHeartbeatAsync()
@@ -324,5 +345,57 @@ namespace DiscordLib
             Debug.WriteLine("^ {0}", message);
             return TaskEx.Run(() => _webSocket.Send(message));
         }
+
+        private static void OnError(string arg1, Exception arg2)
+        {
+
+        }
+
+        #region Events
+        internal AsyncEvent connectingEvent = new AsyncEvent(OnError, "CONNECTING");
+        public event AsyncEventHandler Connecting
+        {
+            add { this.connectingEvent.Register(value); }
+            remove { this.connectingEvent.Unregister(value); }
+        }
+
+        internal AsyncEvent readyEvent = new AsyncEvent(OnError, "READY");
+        public event AsyncEventHandler Ready
+        {
+            add { this.readyEvent.Register(value); }
+            remove { this.readyEvent.Unregister(value); }
+        }
+
+        internal AsyncEvent resumedEvent = new AsyncEvent(OnError, "RESUMED");
+        public event AsyncEventHandler Resumed
+        {
+            add { this.resumedEvent.Register(value); }
+            remove { this.resumedEvent.Unregister(value); }
+        }
+
+        internal AsyncEvent<GuildCreatedEventArgs> guildCreatedEvent
+            = new AsyncEvent<GuildCreatedEventArgs>(OnError, "GUILD_CREATED");
+        public event AsyncEventHandler<GuildCreatedEventArgs> GuildCreated
+        {
+            add { this.guildCreatedEvent.Register(value); }
+            remove { this.guildCreatedEvent.Unregister(value); }
+        }
+
+        internal AsyncEvent<MessageCreateEventArgs> messageCreated
+            = new AsyncEvent<MessageCreateEventArgs>(OnError, "MESSAGE_CREATED");
+        public event AsyncEventHandler<MessageCreateEventArgs> MessageCreated
+        {
+            add { this.messageCreated.Register(value); }
+            remove { this.messageCreated.Unregister(value); }
+        }
+
+        internal AsyncEvent<MessageDeleteEventArgs> messageDeleted
+            = new AsyncEvent<MessageDeleteEventArgs>(OnError, "MESSAGE_DELETED");
+        public event AsyncEventHandler<MessageDeleteEventArgs> MessageDeleted
+        {
+            add { this.messageDeleted.Register(value); }
+            remove { this.messageDeleted.Unregister(value); }
+        }
+        #endregion
     }
 }

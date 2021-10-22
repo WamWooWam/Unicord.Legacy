@@ -33,14 +33,13 @@ namespace Unicord.WP7.ViewModels
 
         public virtual void InvokePropertyChanged([CallerMemberName] string property = null)
         {
-            if (PropertyChanged != null)
-            {
-                var args = new PropertyChangedEventArgs(property);
-                if (syncContext == SynchronizationContext.Current)
-                    PropertyChanged.Invoke(this, args);
-                else
-                    syncContext.Post((o) => PropertyChanged.Invoke(this, (PropertyChangedEventArgs)o), args);
-            }
+            if (PropertyChanged == null) return;
+
+            var args = new PropertyChangedEventArgs(property);
+            if (syncContext == SynchronizationContext.Current)
+                PropertyChanged.Invoke(this, args);
+            else
+                syncContext.Post((o) => PropertyChanged.Invoke(this, (PropertyChangedEventArgs)o), args);
         }
     }
 }

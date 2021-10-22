@@ -27,8 +27,8 @@ namespace Unicord.WP7.ViewModels
             : base(channel)
         {
             Messages = new ObservableCollection<MessageViewModel>();
-            App.Current.Discord.MessageCreated += OnMessageCreated;
-            App.Current.Discord.MessageDeleted += OnMessageDeleted;
+            App.Current.Discord.Socket.MessageCreated += OnMessageCreated;
+            App.Current.Discord.Socket.MessageDeleted += OnMessageDeleted;
         }
 
         public string Title { get { return !string.IsNullOrWhiteSpace(channel.Name) ? channel.Name : dm.Recipients[0].Username; } }
@@ -51,7 +51,7 @@ namespace Unicord.WP7.ViewModels
         private Task OnMessageCreated(MessageCreateEventArgs e)
         {
             if (e.Message.ChannelId == channel.Id)
-                syncContext.Post(a => Messages.Add(new MessageViewModel(e.Message)), null);
+                syncContext.Post(_ => Messages.Add(new MessageViewModel(e.Message)), null);
 
             return TaskEx.Delay(0);
         }
@@ -59,7 +59,7 @@ namespace Unicord.WP7.ViewModels
         private Task OnMessageDeleted(MessageDeleteEventArgs e)
         {
             if (e.Message.ChannelId == channel.Id)
-                syncContext.Post(a => Messages.Remove(Messages.FirstOrDefault(m => m.Id == e.Message.Id)), null);
+                syncContext.Post(_ => Messages.Remove(Messages.FirstOrDefault(m => m.Id == e.Message.Id)), null);
 
             return TaskEx.Delay(0);
         }

@@ -26,36 +26,32 @@ namespace Unicord.WP7
             SystemTray.SetProgressIndicator(this, _connectingProgress);
         }
 
-        async void OnLoaded(object sender, RoutedEventArgs e)
+        public async void OnLoaded(object sender, RoutedEventArgs e)
         {
             string token;
             if (!IsolatedStorageSettings.ApplicationSettings.TryGetValue("LoginToken", out token))
-                App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/LoginPage.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("/Unicord.WP7;component/LoginPage.xaml", UriKind.Relative));
 
-            if (App.Current.Discord != null)
+            var discord = App.Current.EnsureDiscordClient();
+            if (discord != null)
             {
-                App.Current.EnsureDiscordClient();
-            }
+                discord.Socket.Connecting += OnConnecting;
+                discord.Socket.Ready += OnReady;
+                discord.Socket.Resumed += OnReady;
 
-            if (App.Current.Discord != null)
-            {
-                App.Current.Discord.Connecting += OnConnecting;
-                App.Current.Discord.Ready += OnReady;
-                App.Current.Discord.Resumed += OnReady;
-
-                if (App.Current.Discord.CurrentUser == null)
+                if (discord.CurrentUser == null)
                 {
-                    await App.Current.Discord.ConnectAsync().ConfigureAwait(false);
+                    await discord.ConnectAsync().ConfigureAwait(false);
                 }
             }
         }
 
-        void OnUnloaded(object sender, RoutedEventArgs e)
+        public void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (App.Current.Discord != null)
             {
-                App.Current.Discord.Connecting -= OnConnecting;
-                App.Current.Discord.Ready -= OnReady;
+                App.Current.Discord.Socket.Connecting -= OnConnecting;
+                App.Current.Discord.Socket.Ready -= OnReady;
             }
         }
 

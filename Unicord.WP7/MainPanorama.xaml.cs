@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
-//using SysWinGestureEventArgs = System.Windows.Input.GestureEventArgs;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -54,6 +53,15 @@ namespace Unicord.WP7
                 DMsList.SelectedItem = null;
                 App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/Pages/ChannelPage.xaml?id=" + item.Id, UriKind.Relative));
             }
+        }
+
+        private void SignOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("are you sure you want to sign out?", "sign out?", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                return;
+
+            if (IsolatedStorageSettings.ApplicationSettings.Remove("LoginToken"))
+                NavigationService.Navigate(new Uri("/Unicord.WP7;component/LoginPage.xaml", UriKind.Relative));
         }
     }
 }

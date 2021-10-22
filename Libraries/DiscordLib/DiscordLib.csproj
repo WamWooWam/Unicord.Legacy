@@ -119,6 +119,7 @@
     <Compile Include="Presence.cs" />
     <Compile Include="PrivateChannel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadState.cs" />
     <Compile Include="Relationship.cs" />
     <Compile Include="RingBuffer.cs" />
     <Compile Include="Role.cs" />
