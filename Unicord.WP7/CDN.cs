@@ -11,7 +11,7 @@ namespace Unicord.WP7
         {
             if (avatarHash != null)
             {
-                return string.Format("https://cdn.discordapp.com/avatars/{0}/{1}.png?size=64",id, avatarHash);
+                return string.Format("https://cdn.discordapp.com/avatars/{0}/{1}.png?size=64", id, avatarHash);
             }
 
             return string.Format("https://cdn.discordapp.com/embed/avatars/{0}.png?size=64", int.Parse(discriminator) % 5);

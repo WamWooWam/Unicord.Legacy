@@ -6,15 +6,20 @@ using System.Text;
 
 namespace Unicord.WP7.ViewModels
 {
-    public class MockMessageViewModel
+    public class MockMessageViewModel : MessageViewModel
     {
-        public string AuthorName { get; set; }
+        public MockMessageViewModel()
+            : base(null)
+        {
+        }
 
-        public string Content { get; set; }
+        public override string AuthorName { get; set; }
 
-        public string AvatarUrl { get; set; }
+        public override string Content { get; set; }
 
-        public bool IsOutgoing { get; set; }
+        public override string AvatarUrl { get; set; }
+
+        public override bool IsOutgoing { get; set; }
     }
 
     public class MessageViewModel : BaseViewModel
@@ -30,11 +35,13 @@ namespace Unicord.WP7.ViewModels
 
         public ulong AuthorId { get { return message.Author.Id; } }
 
-        public string AuthorName { get { return message.Author.Username; } }
+        public virtual string AuthorName { get { return message.Author.Username; } set { } }
 
-        public string Content { get { return message.Content; } }
+        public virtual string Content { get { return message.Content; } set { } }
 
-        public string AvatarUrl { get { return CDN.AvatarUrl(message.Author.Id, message.Author.AvatarHash, message.Author.Discriminator); } }
+        public virtual string AvatarUrl { get { return CDN.AvatarUrl(message.Author.Id, message.Author.AvatarHash, message.Author.Discriminator); } set { } }
+
+        public virtual bool IsOutgoing { get { return AuthorId == App.Current.Discord.CurrentUser.Id; } set { } }
 
         public string ImageSource
         {

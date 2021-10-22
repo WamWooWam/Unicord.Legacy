@@ -27,15 +27,6 @@ namespace Unicord.WP7.Converters
             if (item is MessageViewModel)
             {
                 var messageVM = item as MessageViewModel;
-                if (messageVM.AuthorId == App.Current.Discord.CurrentUser.Id)
-                {
-                    return OutgoingTemplate;
-                }
-            }
-
-            if (item is MockMessageViewModel)
-            {
-                var messageVM = item as MockMessageViewModel;
                 if (messageVM.IsOutgoing)
                 {
                     return OutgoingTemplate;
