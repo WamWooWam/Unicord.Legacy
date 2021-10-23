@@ -1,0 +1,3 @@
+[submodule "Libraries/Humanizer"]
+	path = Libraries/Humanizer
+	url = https://github.com/WamWooWam/Humanizer
