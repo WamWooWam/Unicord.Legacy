@@ -16,100 +16,133 @@ using System.Windows.Controls.Markdown.Parse;
 
 namespace System.Windows.Controls.Markdown.Helpers
 {
-    internal class ParseHelpers
+    /// <summary>
+    /// Represents the result of parsing an inline element.
+    /// </summary>
+    public class InlineParseResult
     {
-        internal enum InlineParseMethod
+        public InlineParseResult(MarkdownInline parsedElement, int start, int end)
         {
-            /// <summary>
-            /// A bold element
-            /// </summary>
-            Bold,
-
-            /// <summary>
-            /// An bold and italic block
-            /// </summary>
-            BoldItalic,
-
-            /// <summary>
-            /// An underline block
-            /// </summary>
-            Underline,
-
-            /// <summary>
-            /// A code element
-            /// </summary>
-            Code,
-
-            /// <summary>
-            /// An italic block
-            /// </summary>
-            Italic,
-
-            /// <summary>
-            /// A link block
-            /// </summary>
-            MarkdownLink,
-
-            /// <summary>
-            /// An angle bracket link.
-            /// </summary>
-            AngleBracketLink,
-
-            /// <summary>
-            /// A url block
-            /// </summary>
-            Url,
-
-            /// <summary>
-            /// A reddit style link
-            /// </summary>
-            RedditLink,
-
-            /// <summary>
-            /// An in line text link
-            /// </summary>
-            PartialLink,
-
-            /// <summary>
-            /// An email element
-            /// </summary>
-            Email,
-
-            /// <summary>
-            /// strike through element
-            /// </summary>
-            Strikethrough,
-
-            /// <summary>
-            /// Super script element.
-            /// </summary>
-            Superscript,
-
-            /// <summary>
-            /// Image element.
-            /// </summary>
-            Image,
-
-            Discord,
+            ParsedElement = parsedElement;
+            Start = start;
+            End = end;
         }
 
         /// <summary>
-        /// A helper class for the trip chars. This is an optimization. If we ask each class to go
-        /// through the rage and look for itself we end up looping through the range n times, once
-        /// for each inline. This class represent a character that an inline needs to have a
-        /// possible match. We will go through the range once and look for everyone's trip chars,
-        /// and if they can make a match from the trip char then we will commit to them.
+        /// Gets the element that was parsed (can be <c>null</c>).
         /// </summary>
-        internal class InlineTripCharHelper
-        {
-            // Note! Everything in first char and suffix should be lower case!
-            public char FirstChar { get; set; }
+        public MarkdownInline ParsedElement { get; set; }
 
-            public InlineParseMethod Method { get; set; }
-        }
+        /// <summary>
+        /// Gets the position of the first character in the parsed element.
+        /// </summary>
+        public int Start { get; set; }
 
-        private static readonly List<InlineTripCharHelper> _triggerList = new List<InlineTripCharHelper>();
-        private static readonly char[] _tripCharacters;
+        /// <summary>
+        /// Gets the position of the character after the last character in the parsed element.
+        /// </summary>
+        public int End { get; set; }
+    }
+
+    internal enum InlineParseMethod
+    {
+        /// <summary>
+        /// A bold element
+        /// </summary>
+        Bold,
+
+        /// <summary>
+        /// An bold and italic block
+        /// </summary>
+        BoldItalic,
+
+        /// <summary>
+        /// An underline block
+        /// </summary>
+        Underline,
+
+        /// <summary>
+        /// A code element
+        /// </summary>
+        Code,
+
+        /// <summary>
+        /// An italic block
+        /// </summary>
+        Italic,
+
+        /// <summary>
+        /// A link block
+        /// </summary>
+        MarkdownLink,
+
+        /// <summary>
+        /// An angle bracket link.
+        /// </summary>
+        AngleBracketLink,
+
+        /// <summary>
+        /// A url block
+        /// </summary>
+        Url,
+
+        /// <summary>
+        /// A reddit style link
+        /// </summary>
+        RedditLink,
+
+        /// <summary>
+        /// An in line text link
+        /// </summary>
+        PartialLink,
+
+        /// <summary>
+        /// An email element
+        /// </summary>
+        Email,
+
+        /// <summary>
+        /// strike through element
+        /// </summary>
+        Strikethrough,
+
+        /// <summary>
+        /// Super script element.
+        /// </summary>
+        Superscript,
+
+        /// <summary>
+        /// Image element.
+        /// </summary>
+        Image,
+
+        /// <summary>
+        /// Custom element.
+        /// </summary>
+        Custom
+    }
+
+    /// <summary>
+    /// A helper class for the trip chars. This is an optimization. If we ask each class to go
+    /// through the rage and look for itself we end up looping through the range n times, once
+    /// for each inline. This class represent a character that an inline needs to have a
+    /// possible match. We will go through the range once and look for everyone's trip chars,
+    /// and if they can make a match from the trip char then we will commit to them.
+    /// </summary>
+    internal class InlineTripCharHelper
+    {
+        // Note! Everything in first char and suffix should be lower case!
+        public char FirstChar { get; set; }
+
+        public InlineParseMethod Method { get; set; }
+
+        public CustomInlineParser Parser { get; set; }
+    }
+
+    public class ParseHelpers
+    {
+        private static List<InlineTripCharHelper> _triggerList = new List<InlineTripCharHelper>();
+        private static char[] _tripCharacters;
 
         static ParseHelpers()
         {
@@ -123,9 +156,18 @@ namespace System.Windows.Controls.Markdown.Helpers
             SuperscriptTextInline.AddTripChars(_triggerList);
             CodeInline.AddTripChars(_triggerList);
             ImageInline.AddTripChars(_triggerList);
-            DiscordInline.AddTripChars(_triggerList);
+            //DiscordInline.AddTripChars(_triggerList);
 
             // Create an array of characters to search against using IndexOfAny.
+            _tripCharacters = _triggerList.Select(trigger => trigger.FirstChar).Distinct().ToArray();
+        }
+
+        internal static void RegisterParser(CustomInlineParser parser)
+        {
+            var chars = parser.TripChars.Select(c => 
+                new InlineTripCharHelper() { FirstChar = c, Method = InlineParseMethod.Custom, Parser = parser });
+
+            _triggerList.AddRange(chars);
             _tripCharacters = _triggerList.Select(trigger => trigger.FirstChar).Distinct().ToArray();
         }
 
@@ -162,35 +204,6 @@ namespace System.Windows.Controls.Markdown.Helpers
 
             return inlines;
         }
-
-        /// <summary>
-        /// Represents the result of parsing an inline element.
-        /// </summary>
-        internal class InlineParseResult
-        {
-            public InlineParseResult(MarkdownInline parsedElement, int start, int end)
-            {
-                ParsedElement = parsedElement;
-                Start = start;
-                End = end;
-            }
-
-            /// <summary>
-            /// Gets the element that was parsed (can be <c>null</c>).
-            /// </summary>
-            public MarkdownInline ParsedElement { get; set; }
-
-            /// <summary>
-            /// Gets the position of the first character in the parsed element.
-            /// </summary>
-            public int Start { get; set; }
-
-            /// <summary>
-            /// Gets the position of the character after the last character in the parsed element.
-            /// </summary>
-            public int End { get; set; }
-        }
-
         /// <summary>
         /// Finds the next inline element by matching trip chars and verifying the match.
         /// </summary>
@@ -240,8 +253,8 @@ namespace System.Windows.Controls.Markdown.Helpers
                             case InlineParseMethod.Bold:
                                 parseResult = BoldTextInline.Parse(markdown, pos, end);
                                 break;
-                            case InlineParseMethod.Discord:
-                                parseResult = DiscordInline.Parse(markdown, pos, end);
+                            case InlineParseMethod.Custom:
+                                parseResult = currentTripChar.Parser.Parse(markdown, pos, end);
                                 break;
                             case InlineParseMethod.MarkdownLink:
                                 if (!ignoreLinks)
@@ -461,7 +474,7 @@ namespace System.Windows.Controls.Markdown.Helpers
         /// Parses lines.
         /// </summary>
         /// <returns>LineInfo</returns>
-        public static IEnumerable<LineInfo> ParseLines(string markdown, int start, int end, int quoteDepth)
+        internal static IEnumerable<LineInfo> ParseLines(string markdown, int start, int end, int quoteDepth)
         {
             int pos = start;
             bool lineStartsNewParagraph = true;

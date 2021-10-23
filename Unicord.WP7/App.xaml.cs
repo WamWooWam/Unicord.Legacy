@@ -14,6 +14,8 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using DiscordLib;
 using System.IO.IsolatedStorage;
+using System.Windows.Controls.Markdown;
+using Unicord.WP7.Markdown;
 
 namespace Unicord.WP7
 {
@@ -65,6 +67,9 @@ namespace Unicord.WP7
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
+
+
+            MarkdownTextBlock.RegisterCustomInline<DiscordInline>(new DiscordInlineParser(), new DiscordInlineRenderer());
         }
 
         public DiscordClient EnsureDiscordClient()
@@ -90,10 +95,13 @@ namespace Unicord.WP7
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
-        private void Application_Activated(object sender, ActivatedEventArgs e)
+        private async void Application_Activated(object sender, ActivatedEventArgs e)
         {
-            EnsureDiscordClient();
-            var x = App.Current.Discord.ConnectAsync();
+            var client = EnsureDiscordClient();
+            if (client != null)
+            {
+                await client.ConnectAsync();
+            }
         }
 
         // Code to execute when the application is deactivated (sent to background)

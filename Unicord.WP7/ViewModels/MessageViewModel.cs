@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Unicord.WP7.Providers;
 
 namespace Unicord.WP7.ViewModels
 {
@@ -22,26 +23,53 @@ namespace Unicord.WP7.ViewModels
         public override bool IsOutgoing { get; set; }
     }
 
-    public class MessageViewModel : BaseViewModel
+    public class MessageViewModel : BaseViewModel, IHasAuthor, IHasUser, IHasChannel, IHasGuild
     {
         protected Message message;
+
         public MessageViewModel(Message message)
             : base()
         {
             this.message = message;
         }
 
-        public ulong Id { get { return message.Id; } }
+        public User Author { get { return message.Author; } }
+        public Channel Channel { get { return Discord.GetCachedChannel(message.ChannelId); } }
+        public Guild Guild { get { return Discord.GetCachedGuild(Channel.GuildId); } }
 
-        public ulong AuthorId { get { return message.Author.Id; } }
+        public ulong Id
+        {
+            get { return message.Id; }
+        }
 
-        public virtual string AuthorName { get { return message.Author.Username; } set { } }
+        public ulong AuthorId
+        {
+            get { return message.Author.Id; }
+        }
 
-        public virtual string Content { get { return message.Content; } set { } }
+        public virtual string AuthorName
+        {
+            get { return message.Author.Username; }
+            set { }
+        }
 
-        public virtual string AvatarUrl { get { return CDN.AvatarUrl(message.Author.Id, message.Author.AvatarHash, message.Author.Discriminator); } set { } }
+        public virtual string Content
+        {
+            get { return message.Content; }
+            set { }
+        }
 
-        public virtual bool IsOutgoing { get { return AuthorId == App.Current.Discord.CurrentUser.Id; } set { } }
+        public virtual string AvatarUrl
+        {
+            get { return CDN.AvatarUrl(message.Author.Id, message.Author.AvatarHash, message.Author.Discriminator); }
+            set { }
+        }
+
+        public virtual bool IsOutgoing
+        {
+            get { return AuthorId == Discord.CurrentUser.Id; }
+            set { }
+        }
 
         public string ImageSource
         {
@@ -53,7 +81,7 @@ namespace Unicord.WP7.ViewModels
                     var width = (float)attach.Width;
                     var height = (float)attach.Height;
 
-                    Tools.Scale(ref width, ref height, 384, 600);
+                    Utils.Scale(ref width, ref height, 384, 600);
 
                     return string.Concat(message.Attachments[0].ProxyUrl, "?format=jpeg&width=", width, "&height=", height);
                 }
@@ -61,5 +89,7 @@ namespace Unicord.WP7.ViewModels
                 return null;
             }
         }
+
+        User IHasUser.User { get { return Author; } }
     }
 }

@@ -74,11 +74,11 @@ namespace System.Windows.Controls.Markdown
 
         public static readonly DependencyProperty CodeFontSizeProperty =
             DependencyProperty.Register(
-            "CodeFontSize", 
-            typeof(double), 
-            typeof(MarkdownTextBlock), 
-            new PropertyMetadata(16.0, OnPropertyChangedStatic));        
-        
+            "CodeFontSize",
+            typeof(double),
+            typeof(MarkdownTextBlock),
+            new PropertyMetadata(16.0, OnPropertyChangedStatic));
+
         /// <summary>
         /// The root element for our rendering.
         /// </summary>
@@ -1156,87 +1156,87 @@ namespace System.Windows.Controls.Markdown
             UnhookListeners();
 
             MarkdownRenderedEventArgs markdownRenderedArgs = new MarkdownRenderedEventArgs(null);
-            try
-            {
-                // Try to parse the markdown.
-                MarkdownDocument markdown = new MarkdownDocument();
-                markdown.Parse(Text);
+            //try
+            //{
+            // Try to parse the markdown.
+            MarkdownDocument markdown = new MarkdownDocument();
+            markdown.Parse(Text);
 
-                // Now try to display it
-                renderer = new XamlRenderer(markdown, this, this)
-                 {
-                     Background = Background,
-                     BorderBrush = BorderBrush,
-                     BorderThickness = BorderThickness,
-                     FontFamily = FontFamily,
-                     FontSize = FontSize,
-                     FontStretch = FontStretch,
-                     FontStyle = FontStyle,
-                     FontWeight = FontWeight,
-                     Foreground = Foreground,
-                     IsTextSelectionEnabled = IsTextSelectionEnabled,
-                     Padding = Padding,
-                     CodeBackground = CodeBackground,
-                     CodeBorderBrush = CodeBorderBrush,
-                     CodeBorderThickness = CodeBorderThickness,
-                     CodeForeground = CodeForeground,
-                     CodeFontFamily = CodeFontFamily,
-                     CodePadding = CodePadding,
-                     CodeMargin = CodeMargin,
-                     CodeFontSize = CodeFontSize,
-                     Header1FontSize = Header1FontSize,
-                     Header1FontWeight = Header1FontWeight,
-                     Header1Margin = Header1Margin,
-                     Header1Foreground = Header1Foreground,
-                     Header2FontSize = Header2FontSize,
-                     Header2FontWeight = Header2FontWeight,
-                     Header2Margin = Header2Margin,
-                     Header2Foreground = Header2Foreground,
-                     Header3FontSize = Header3FontSize,
-                     Header3FontWeight = Header3FontWeight,
-                     Header3Margin = Header3Margin,
-                     Header3Foreground = Header3Foreground,
-                     Header4FontSize = Header4FontSize,
-                     Header4FontWeight = Header4FontWeight,
-                     Header4Margin = Header4Margin,
-                     Header4Foreground = Header4Foreground,
-                     Header5FontSize = Header5FontSize,
-                     Header5FontWeight = Header5FontWeight,
-                     Header5Margin = Header5Margin,
-                     Header5Foreground = Header5Foreground,
-                     Header6FontSize = Header6FontSize,
-                     Header6FontWeight = Header6FontWeight,
-                     Header6Margin = Header6Margin,
-                     Header6Foreground = Header6Foreground,
-                     HorizontalRuleBrush = HorizontalRuleBrush,
-                     HorizontalRuleMargin = HorizontalRuleMargin,
-                     HorizontalRuleThickness = HorizontalRuleThickness,
-                     ListMargin = ListMargin,
-                     ListGutterWidth = ListGutterWidth,
-                     ListBulletSpacing = ListBulletSpacing,
-                     ParagraphMargin = ParagraphMargin,
-                     QuoteBackground = QuoteBackground,
-                     QuoteBorderBrush = QuoteBorderBrush,
-                     QuoteBorderThickness = QuoteBorderThickness,
-                     QuoteForeground = QuoteForeground,
-                     QuoteMargin = QuoteMargin,
-                     QuotePadding = QuotePadding,
-                     TableBorderBrush = TableBorderBrush,
-                     TableBorderThickness = TableBorderThickness,
-                     TableCellPadding = TableCellPadding,
-                     TableMargin = TableMargin,
-                     TextWrapping = TextWrapping,
-                     LinkForeground = LinkForeground,
-                     ImageStretch = ImageStretch,
-                     IsBasicMarkdown = IsBasicMarkdown
-                 };
-                _rootElement.Child = renderer.Render();
-            }
-            catch (Exception ex)
+            // Now try to display it
+            renderer = new XamlRenderer(markdown, this, this, this.DataContext)
             {
-                DebuggingReporter.ReportCriticalError("Error while parsing and rendering: " + ex.Message);
-                markdownRenderedArgs = new MarkdownRenderedEventArgs(ex);
-            }
+                Background = Background,
+                BorderBrush = BorderBrush,
+                BorderThickness = BorderThickness,
+                FontFamily = FontFamily,
+                FontSize = FontSize,
+                FontStretch = FontStretch,
+                FontStyle = FontStyle,
+                FontWeight = FontWeight,
+                Foreground = Foreground,
+                IsTextSelectionEnabled = IsTextSelectionEnabled,
+                Padding = Padding,
+                CodeBackground = CodeBackground,
+                CodeBorderBrush = CodeBorderBrush,
+                CodeBorderThickness = CodeBorderThickness,
+                CodeForeground = CodeForeground,
+                CodeFontFamily = CodeFontFamily,
+                CodePadding = CodePadding,
+                CodeMargin = CodeMargin,
+                CodeFontSize = CodeFontSize,
+                Header1FontSize = Header1FontSize,
+                Header1FontWeight = Header1FontWeight,
+                Header1Margin = Header1Margin,
+                Header1Foreground = Header1Foreground,
+                Header2FontSize = Header2FontSize,
+                Header2FontWeight = Header2FontWeight,
+                Header2Margin = Header2Margin,
+                Header2Foreground = Header2Foreground,
+                Header3FontSize = Header3FontSize,
+                Header3FontWeight = Header3FontWeight,
+                Header3Margin = Header3Margin,
+                Header3Foreground = Header3Foreground,
+                Header4FontSize = Header4FontSize,
+                Header4FontWeight = Header4FontWeight,
+                Header4Margin = Header4Margin,
+                Header4Foreground = Header4Foreground,
+                Header5FontSize = Header5FontSize,
+                Header5FontWeight = Header5FontWeight,
+                Header5Margin = Header5Margin,
+                Header5Foreground = Header5Foreground,
+                Header6FontSize = Header6FontSize,
+                Header6FontWeight = Header6FontWeight,
+                Header6Margin = Header6Margin,
+                Header6Foreground = Header6Foreground,
+                HorizontalRuleBrush = HorizontalRuleBrush,
+                HorizontalRuleMargin = HorizontalRuleMargin,
+                HorizontalRuleThickness = HorizontalRuleThickness,
+                ListMargin = ListMargin,
+                ListGutterWidth = ListGutterWidth,
+                ListBulletSpacing = ListBulletSpacing,
+                ParagraphMargin = ParagraphMargin,
+                QuoteBackground = QuoteBackground,
+                QuoteBorderBrush = QuoteBorderBrush,
+                QuoteBorderThickness = QuoteBorderThickness,
+                QuoteForeground = QuoteForeground,
+                QuoteMargin = QuoteMargin,
+                QuotePadding = QuotePadding,
+                TableBorderBrush = TableBorderBrush,
+                TableBorderThickness = TableBorderThickness,
+                TableCellPadding = TableCellPadding,
+                TableMargin = TableMargin,
+                TextWrapping = TextWrapping,
+                LinkForeground = LinkForeground,
+                ImageStretch = ImageStretch,
+                IsBasicMarkdown = IsBasicMarkdown
+            };
+            _rootElement.Child = renderer.Render();
+            // }
+            //catch (Exception ex)
+            //{
+            //    DebuggingReporter.ReportCriticalError("Error while parsing and rendering: " + ex.Message);
+            //    markdownRenderedArgs = new MarkdownRenderedEventArgs(ex);
+            //}
 
             // Indicate that the parse is done.
             if (MarkdownRendered != null)
@@ -1330,6 +1330,13 @@ namespace System.Windows.Controls.Markdown
             {
                 return null;
             }
+        }
+
+        public static void RegisterCustomInline<TInline>(CustomInlineParser parser, CustomXamlInlineRenderer<TInline> renderer)
+            where TInline : CustomInline
+        {
+            ParseHelpers.RegisterParser(parser);
+            XamlRenderer.RegisterRenderer<TInline>(renderer);
         }
     }
 }

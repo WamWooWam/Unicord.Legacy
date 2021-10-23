@@ -86,13 +86,13 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<ParseHelpers.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '<', Method = ParseHelpers.InlineParseMethod.AngleBracketLink });
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = ':', Method = ParseHelpers.InlineParseMethod.Url });
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '/', Method = ParseHelpers.InlineParseMethod.RedditLink });
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '.', Method = ParseHelpers.InlineParseMethod.PartialLink });
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '@', Method = ParseHelpers.InlineParseMethod.Email });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '<', Method = InlineParseMethod.AngleBracketLink });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = ':', Method = InlineParseMethod.Url });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '/', Method = InlineParseMethod.RedditLink });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '.', Method = InlineParseMethod.PartialLink });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '@', Method = InlineParseMethod.Email });
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static ParseHelpers.InlineParseResult ParseAngleBracketLink(string markdown, int start, int maxEnd)
+        internal static InlineParseResult ParseAngleBracketLink(string markdown, int start, int maxEnd)
         {
             int innerStart = start + 1;
 
@@ -154,7 +154,7 @@ namespace System.Windows.Controls.Markdown.Parse
             }
 
             string url = markdown.Substring(innerStart, innerEnd - innerStart);
-            return new ParseHelpers.InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.BracketedUrl }, start, innerEnd + 1);
+            return new InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.BracketedUrl }, start, innerEnd + 1);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="tripPos"> The location of the colon character. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static ParseHelpers.InlineParseResult ParseUrl(string markdown, int tripPos, int maxEnd)
+        internal static InlineParseResult ParseUrl(string markdown, int tripPos, int maxEnd)
         {
             int start = -1;
 
@@ -203,7 +203,7 @@ namespace System.Windows.Controls.Markdown.Parse
             int end = FindUrlEnd(markdown, dotIndex + 1, maxEnd);
 
             string url = markdown.Substring(start, end - start);
-            return new ParseHelpers.InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.FullUrl }, start, end);
+            return new InlineParseResult(new HyperlinkInline { Url = url, Text = url, LinkType = HyperlinkType.FullUrl }, start, end);
         }
 
         /// <summary>
@@ -213,9 +213,9 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed subreddit or user link, or <c>null</c> if this is not a subreddit link. </returns>
-        internal static ParseHelpers.InlineParseResult ParseRedditLink(string markdown, int start, int maxEnd)
+        internal static InlineParseResult ParseRedditLink(string markdown, int start, int maxEnd)
         {
-            ParseHelpers.InlineParseResult result = ParseDoubleSlashLink(markdown, start, maxEnd);
+            InlineParseResult result = ParseDoubleSlashLink(markdown, start, maxEnd);
             if (result != null)
             {
                 return result;
@@ -231,7 +231,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed subreddit or user link, or <c>null</c> if this is not a subreddit link. </returns>
-        private static ParseHelpers.InlineParseResult ParseDoubleSlashLink(string markdown, int start, int maxEnd)
+        private static InlineParseResult ParseDoubleSlashLink(string markdown, int start, int maxEnd)
         {
             // The minimum length is 4 characters ("/u/u").
             if (start > maxEnd - 4)
@@ -271,7 +271,7 @@ namespace System.Windows.Controls.Markdown.Parse
 
             // We found something!
             string text = markdown.Substring(start, end - start);
-            return new ParseHelpers.InlineParseResult(new HyperlinkInline { Text = text, Url = text, LinkType = linkType }, start, end);
+            return new InlineParseResult(new HyperlinkInline { Text = text, Url = text, LinkType = linkType }, start, end);
         }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed subreddit or user link, or <c>null</c> if this is not a subreddit link. </returns>
-        private static ParseHelpers.InlineParseResult ParseSingleSlashLink(string markdown, int start, int maxEnd)
+        private static InlineParseResult ParseSingleSlashLink(string markdown, int start, int maxEnd)
         {
             // The minimum length is 3 characters ("u/u").
             start--;
@@ -323,7 +323,7 @@ namespace System.Windows.Controls.Markdown.Parse
 
             // We found something!
             string text = markdown.Substring(start, end - start);
-            return new ParseHelpers.InlineParseResult(new HyperlinkInline { Text = text, Url = "/" + text, LinkType = linkType }, start, end);
+            return new InlineParseResult(new HyperlinkInline { Text = text, Url = "/" + text, LinkType = linkType }, start, end);
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="tripPos"> The location of the dot character. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static ParseHelpers.InlineParseResult ParsePartialLink(string markdown, int tripPos, int maxEnd)
+        internal static InlineParseResult ParsePartialLink(string markdown, int tripPos, int maxEnd)
         {
             int start = tripPos - 3;
             if (start < 0 || markdown[start] != 'w' || markdown[start + 1] != 'w' || markdown[start + 2] != 'w')
@@ -357,7 +357,7 @@ namespace System.Windows.Controls.Markdown.Parse
             int end = FindUrlEnd(markdown, start + 4, maxEnd);
 
             string url = markdown.Substring(start, end - start);
-            return new ParseHelpers.InlineParseResult(new HyperlinkInline { Url = "http://" + url, Text = url, LinkType = HyperlinkType.PartialUrl }, start, end);
+            return new InlineParseResult(new HyperlinkInline { Url = "http://" + url, Text = url, LinkType = HyperlinkType.PartialUrl }, start, end);
         }
 
         /// <summary>
@@ -368,7 +368,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="tripPos"> The location of the at character. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed URL, or <c>null</c> if this is not a URL. </returns>
-        internal static ParseHelpers.InlineParseResult ParseEmailAddress(string markdown, int minStart, int tripPos, int maxEnd)
+        internal static InlineParseResult ParseEmailAddress(string markdown, int minStart, int tripPos, int maxEnd)
         {
             // Search backwards until we find a character which is not a letter, digit, or one of
             // these characters: '+', '-', '_', '.'.
@@ -448,7 +448,7 @@ namespace System.Windows.Controls.Markdown.Parse
 
             // We found an email address!
             string emailAddress = markdown.Substring(start, end - start);
-            return new ParseHelpers.InlineParseResult(new HyperlinkInline { Url = "mailto:" + emailAddress, Text = emailAddress, LinkType = HyperlinkType.Email }, start, end);
+            return new InlineParseResult(new HyperlinkInline { Url = "mailto:" + emailAddress, Text = emailAddress, LinkType = HyperlinkType.Email }, start, end);
         }
 
         /// <summary>

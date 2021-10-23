@@ -17,7 +17,7 @@ namespace System.Windows.Controls.Markdown.Parse
     /// <summary>
     /// Initializes a new instance of the <see cref="IInlineContainer"/> class.
     /// </summary>
-    internal interface IInlineContainer
+    public interface IInlineContainer
     {
         /// <summary>
         /// Gets or sets the contents of the inline.

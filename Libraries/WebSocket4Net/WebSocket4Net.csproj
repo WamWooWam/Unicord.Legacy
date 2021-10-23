@@ -18,13 +18,15 @@
     <SilverlightApplication>false</SilverlightApplication>
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;NO_SPINWAIT_CLASS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;NO_SPINWAIT_CLASS;PCL</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -42,11 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\deps\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.ProtoBase, Version=1.7.0.17, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\deps\SuperSocket.ProtoBase.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -140,6 +138,49 @@
     <Compile Include="SuperSocket.ClientEngine\Proxy\Socks4aConnector.cs" />
     <Compile Include="SuperSocket.ClientEngine\Proxy\Socks4Connector.cs" />
     <Compile Include="SuperSocket.ClientEngine\Proxy\Socks5Connector.cs" />
+    <Compile Include="SuperSocket.ProtoBase\BasicStringParser.cs" />
+    <Compile Include="SuperSocket.ProtoBase\BufferedPackageInfo.cs" />
+    <Compile Include="SuperSocket.ProtoBase\BufferList.cs" />
+    <Compile Include="SuperSocket.ProtoBase\BufferStream.cs" />
+    <Compile Include="SuperSocket.ProtoBase\Buffer\IBufferManager.cs" />
+    <Compile Include="SuperSocket.ProtoBase\Buffer\NullBufferManager.cs" />
+    <Compile Include="SuperSocket.ProtoBase\CloseReason.cs" />
+    <Compile Include="SuperSocket.ProtoBase\DefaultPipelineProcessor.cs" />
+    <Compile Include="SuperSocket.ProtoBase\DefaultProtoHandler.cs" />
+    <Compile Include="SuperSocket.ProtoBase\Encoder\IProtoDataEncoder.cs" />
+    <Compile Include="SuperSocket.ProtoBase\Encoder\IProtoObjectEncoder.cs" />
+    <Compile Include="SuperSocket.ProtoBase\Encoder\IProtoTextEncoder.cs" />
+    <Compile Include="SuperSocket.ProtoBase\Extensions.cs" />
+    <Compile Include="SuperSocket.ProtoBase\FilterState.cs" />
+    <Compile Include="SuperSocket.ProtoBase\HttpBase\HttpHeaderInfo.cs" />
+    <Compile Include="SuperSocket.ProtoBase\HttpBase\HttpHeaderReceiveFilterBase.cs" />
+    <Compile Include="SuperSocket.ProtoBase\HttpBase\HttpPackageInfoBase.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IBufferedPackageInfo.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IBufferRecycler.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IBufferState.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ICommunicationChannel.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IOutputBuffer.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IPackageHandler.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IPackageInfo.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IPackageResolver.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IPipelineProcessor.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IProtoHandler.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IReceiveFilter.cs" />
+    <Compile Include="SuperSocket.ProtoBase\IStringParser.cs" />
+    <Compile Include="SuperSocket.ProtoBase\MimeHeaderHelper.cs" />
+    <Compile Include="SuperSocket.ProtoBase\PackageInfo.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ProcessResult.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ProcessState.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ProtoHandlerBase.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\BeginEndMarkReceiveFilter.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\CountSpliterReceiveFilter.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\FixedHeaderReceiveFilter.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\FixedSizeReceiveFilter.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\SearchMarkState.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\StateFullSearch.cs" />
+    <Compile Include="SuperSocket.ProtoBase\ReceiveFilters\TerminatorReceiveFilter.cs" />
+    <Compile Include="SuperSocket.ProtoBase\SingleItemList.cs" />
+    <Compile Include="SuperSocket.ProtoBase\StringPackageInfo.cs" />
     <Compile Include="WebSocket.cs" />
     <Compile Include="WebSocket.Silverlight.cs" />
     <Compile Include="WebSocketCommandInfo.cs" />
@@ -163,6 +204,13 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,22 +1,28 @@
-﻿using System;
+﻿using DiscordLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using Unicord.WP7.Providers;
 
 namespace Unicord.WP7.ViewModels
 {
-    public abstract class BaseViewModel : INotifyPropertyChanged
+    public abstract class BaseViewModel : INotifyPropertyChanged, IHasDiscordClient
     {
         protected SynchronizationContext syncContext;
+        private DiscordClient discord;
 
         public BaseViewModel()
         {
             // capture the sync context used for this VM
             syncContext = SynchronizationContext.Current;
+            discord = App.Current.Discord;
         }
+
+        public DiscordClient Discord { get { return discord; } }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

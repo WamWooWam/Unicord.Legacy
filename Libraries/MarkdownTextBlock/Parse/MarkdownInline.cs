@@ -69,13 +69,18 @@ namespace System.Windows.Controls.Markdown.Parse
         /// </summary>
         Image,
 
-        Discord
+        /// <summary>
+        /// A custom inline
+        /// </summary>
+        Custom,
+
+        // Discord
     }
 
     /// <summary>
     /// An internal class that is the base class for all inline elements.
     /// </summary>
-    internal abstract class MarkdownInline : MarkdownElement
+    public abstract class MarkdownInline : MarkdownElement
     {
         /// <summary>
         /// Gets or sets this element is.

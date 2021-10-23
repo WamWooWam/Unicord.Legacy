@@ -26,9 +26,31 @@ using System.Windows.Media.Imaging;
 
 namespace System.Windows.Controls.Markdown.Display
 {
+    internal class XamlRenderContext
+    {
+        public Brush Foreground { get; set; }
+
+        public bool TrimLeadingWhitespace { get; set; }
+
+        public bool WithinHyperlink { get; set; }
+
+        public object DataContext { get; set; }
+
+        public XamlRenderContext Clone()
+        {
+            return (XamlRenderContext)MemberwiseClone();
+        }
+    }
+
     internal class XamlRenderer
     {
         private static bool TextDecorationsSupported { get { return true; } }
+        private static Dictionary<Type, CustomXamlInlineRenderer> CustomRenderers = new Dictionary<Type, CustomXamlInlineRenderer>();
+
+        internal static void RegisterRenderer<TInline>(CustomXamlInlineRenderer renderer)
+        {
+            CustomRenderers[typeof(TInline)] = renderer;
+        }
 
         internal static Brush Transparent = new SolidColorBrush(Colors.Transparent);
 
@@ -47,11 +69,12 @@ namespace System.Windows.Controls.Markdown.Display
         /// </summary>
         private readonly IImageResolver _imageResolver;
 
-        public XamlRenderer(MarkdownDocument document, ILinkRegister linkRegister, IImageResolver imageResolver)
+        public XamlRenderer(MarkdownDocument document, ILinkRegister linkRegister, IImageResolver imageResolver, object dataContext)
         {
             _document = document;
             _linkRegister = linkRegister;
             _imageResolver = imageResolver;
+            _dataContext = dataContext;
         }
 
         public List<RichTextBox> textBoxes = new List<RichTextBox>();
@@ -383,6 +406,7 @@ namespace System.Windows.Controls.Markdown.Display
         public Brush LinkForeground { get; set; }
 
         private StackPanel _root;
+        private object _dataContext;
 
         /// <summary>
         /// Called externally to render markdown to a text block.
@@ -391,7 +415,7 @@ namespace System.Windows.Controls.Markdown.Display
         public UIElement Render()
         {
             _root = new StackPanel();
-            RenderBlocks(_document.Blocks, _root.Children, new RenderContext { Foreground = Foreground });
+            RenderBlocks(_document.Blocks, _root.Children, new XamlRenderContext { Foreground = Foreground, DataContext = _dataContext });
 
             // Set background and border properties.
             _root.Background = Background;
@@ -399,25 +423,10 @@ namespace System.Windows.Controls.Markdown.Display
             return _root;
         }
 
-        // Helper class for holding persistent state.
-        private class RenderContext
-        {
-            public Brush Foreground { get; set; }
-
-            public bool TrimLeadingWhitespace { get; set; }
-
-            public bool WithinHyperlink { get; set; }
-
-            public RenderContext Clone()
-            {
-                return (RenderContext)MemberwiseClone();
-            }
-        }
-
         /// <summary>
         /// Renders a list of block elements.
         /// </summary>
-        private void RenderBlocks(IEnumerable<MarkdownBlock> blockElements, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderBlocks(IEnumerable<MarkdownBlock> blockElements, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             foreach (MarkdownBlock element in blockElements)
             {
@@ -464,7 +473,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Called to render a block element.
         /// </summary>
-        private void RenderBlock(MarkdownBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderBlock(MarkdownBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             switch (element.Type)
             {
@@ -499,7 +508,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a paragraph element.
         /// </summary>
-        private void RenderParagraph(ParagraphBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderParagraph(ParagraphBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             Paragraph paragraph = new Paragraph
             {
@@ -515,7 +524,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a header element.
         /// </summary>
-        private void RenderHeader(HeaderBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderHeader(HeaderBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             RichTextBox textBlock = CreateOrReuseRichTextBlock(blockUIElementCollection, context);
 
@@ -576,7 +585,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a list element.
         /// </summary>
-        private void RenderListElement(ListBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderListElement(ListBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             // Create a grid with two columns.
             Grid grid = new Grid
@@ -627,7 +636,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a horizontal rule element.
         /// </summary>
-        private void RenderHorizontalRule(UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderHorizontalRule(UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             Rectangle rectangle = new Rectangle
             {
@@ -643,7 +652,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a quote element.
         /// </summary>
-        private void RenderQuote(QuoteBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderQuote(QuoteBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             if (QuoteForeground != null)
             {
@@ -670,7 +679,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a code element.
         /// </summary>
-        private void RenderCode(CodeBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderCode(CodeBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             TextBlock textBlock = CreateTextBlock(context);
             textBlock.FontFamily = CodeFontFamily ?? FontFamily;
@@ -697,7 +706,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <summary>
         /// Renders a table element.
         /// </summary>
-        private void RenderTable(TableBlock element, UIElementCollection blockUIElementCollection, RenderContext context)
+        private void RenderTable(TableBlock element, UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             MarkdownTable table = new MarkdownTable(element.ColumnDefinitions.Count, element.Rows.Count, TableBorderThickness, TableBorderBrush)
             {
@@ -744,7 +753,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineElements"> The parsed inline elements to render. </param>
         /// <param name="parent"> The container element. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderInlineChildren(InlineCollection inlineCollection, IList<MarkdownInline> inlineElements, TextElement parent, RenderContext context)
+        internal void RenderInlineChildren(InlineCollection inlineCollection, IList<MarkdownInline> inlineElements, TextElement parent, XamlRenderContext context)
         {
             foreach (MarkdownInline element in inlineElements)
             {
@@ -759,7 +768,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="parent"> The container element. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderInline(InlineCollection inlineCollection, MarkdownInline element, TextElement parent, RenderContext context)
+        private void RenderInline(InlineCollection inlineCollection, MarkdownInline element, TextElement parent, XamlRenderContext context)
         {
             switch (element.Type)
             {
@@ -794,8 +803,8 @@ namespace System.Windows.Controls.Markdown.Display
                     if (!IsBasicMarkdown)
                         RenderImage(inlineCollection, (ImageInline)element, context);
                     break;
-                case MarkdownInlineType.Discord:
-                    RenderDiscord(inlineCollection, (DiscordInline)element, context);
+                case MarkdownInlineType.Custom:
+                    CustomRenderers[element.GetType()].Render(new CustomXamlInlineRenderContext(this, context, inlineCollection, parent), element);
                     break;
             }
         }
@@ -807,7 +816,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
         /// <returns><see cref="Run"/></returns>
-        private Run RenderTextRun(InlineCollection inlineCollection, TextRunInline element, RenderContext context)
+        private Run RenderTextRun(InlineCollection inlineCollection, TextRunInline element, XamlRenderContext context)
         {
             // Create the text run
             Run textRun = new Run
@@ -827,7 +836,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderBoldRun(InlineCollection inlineCollection, BoldTextInline element, RenderContext context)
+        private void RenderBoldRun(InlineCollection inlineCollection, BoldTextInline element, XamlRenderContext context)
         {
             // Create the text run
             Span boldSpan = new Span
@@ -848,7 +857,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderUnderlineRun(InlineCollection inlineCollection, UnderlineTextInline element, RenderContext context)
+        private void RenderUnderlineRun(InlineCollection inlineCollection, UnderlineTextInline element, XamlRenderContext context)
         {
             // Create the text run
             Span boldSpan = new Span
@@ -870,7 +879,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="parent"> The container element. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderMarkdownLink(InlineCollection inlineCollection, MarkdownLinkInline element, TextElement parent, RenderContext context)
+        private void RenderMarkdownLink(InlineCollection inlineCollection, MarkdownLinkInline element, TextElement parent, XamlRenderContext context)
         {
             // Avoid crash when link text is empty.
             if (element.Inlines.Count == 0)
@@ -902,7 +911,7 @@ namespace System.Windows.Controls.Markdown.Display
                 RemoveSuperscriptRuns(element, insertCaret: true);
 
                 // Render the children into the link inline.
-                RenderContext childContext = context.Clone();
+                XamlRenderContext childContext = context.Clone();
                 childContext.WithinHyperlink = true;
 
                 if (LinkForeground != null)
@@ -943,7 +952,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private async void RenderImage(InlineCollection inlineCollection, ImageInline element, RenderContext context)
+        private async void RenderImage(InlineCollection inlineCollection, ImageInline element, XamlRenderContext context)
         {
             Run placeholder = RenderTextRun(inlineCollection, new TextRunInline { Text = element.Text, Type = MarkdownInlineType.TextRun }, context);
 
@@ -985,7 +994,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderHyperlink(InlineCollection inlineCollection, HyperlinkInline element, RenderContext context)
+        private void RenderHyperlink(InlineCollection inlineCollection, HyperlinkInline element, XamlRenderContext context)
         {
             Hyperlink link = new Hyperlink();
 
@@ -1010,7 +1019,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderItalicRun(InlineCollection inlineCollection, ItalicTextInline element, RenderContext context)
+        private void RenderItalicRun(InlineCollection inlineCollection, ItalicTextInline element, XamlRenderContext context)
         {
             // Create the text run
             Span italicSpan = new Span
@@ -1031,68 +1040,34 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderStrikethroughRun(InlineCollection inlineCollection, StrikethroughTextInline element, RenderContext context)
+        private void RenderStrikethroughRun(InlineCollection inlineCollection, StrikethroughTextInline element, XamlRenderContext context)
         {
             Span span = new Span();
-
-            if (TextDecorationsSupported)
-            {
-                // span.TextDecorations = TextDecorations.Strikethrough;
-            }
-            else
-            {
-                span.FontFamily = new FontFamily("Consolas");
-            }
+            span.FontFamily = new FontFamily("Consolas");
 
             // Render the children into the inline.
             RenderInlineChildren(span.Inlines, element.Inlines, span, context);
 
-            if (!TextDecorationsSupported)
+            AlterChildRuns(span, (parentSpan, run) =>
             {
-                AlterChildRuns(span, (parentSpan, run) =>
+                string text = run.Text;
+                StringBuilder builder = new StringBuilder(text.Length * 2);
+                foreach (char c in text)
                 {
-                    string text = run.Text;
-                    StringBuilder builder = new StringBuilder(text.Length * 2);
-                    foreach (char c in text)
-                    {
-                        builder.Append((char)0x0336);
-                        builder.Append(c);
-                    }
-                    run.Text = builder.ToString();
-                });
-            }
+                    builder.Append((char)0x0336);
+                    builder.Append(c);
+                }
+                run.Text = builder.ToString();
+            });
+
 
             // Add it to the current inlines
             inlineCollection.Add(span);
         }
 
-        private void RenderDiscord(InlineCollection inlineCollection, DiscordInline element, RenderContext context)
-        {
-            if (element.DiscordType != DiscordInline.MentionType.Emote)
-            {
-
-            }
-            else
-            {
-               // _root.RenderTransform = new TranslateTransform() { Y = -10 };
-               // _root.Margin = new Thickness(0, 0, 0, -4);
-
-                var uri = string.Format("https://cdn.discordapp.com/emojis/{0}.png?size=128", element.Id);
-                var size = 32;
-                var ui = new InlineUIContainer()
-                {
-                    FontSize = 32,
-                    Child = new Image()
-                    {
-                        Source = new BitmapImage(new Uri(uri)),
-                        Height = size,
-                        MaxWidth = size * 3,
-                       // RenderTransform = new TranslateTransform() { Y = 10 }
-                    }
-                };
-                inlineCollection.Add(ui);
-            }
-        }
+        //private void RenderDiscord(InlineCollection inlineCollection, DiscordInline element, XamlRenderContext context)
+        //{
+        //}
 
         /// <summary>
         /// Renders a superscript element.
@@ -1101,7 +1076,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="parent"> The container element. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderSuperscriptRun(InlineCollection inlineCollection, SuperscriptTextInline element, TextElement parent, RenderContext context)
+        private void RenderSuperscriptRun(InlineCollection inlineCollection, SuperscriptTextInline element, TextElement parent, XamlRenderContext context)
         {
             // Le <sigh>, InlineUIContainers are not allowed within hyperlinks.
             if (context.WithinHyperlink)
@@ -1138,7 +1113,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// <param name="inlineCollection"> The list to add to. </param>
         /// <param name="element"> The parsed inline element to render. </param>
         /// <param name="context"> Persistent state. </param>
-        private void RenderCodeRun(InlineCollection inlineCollection, CodeInline element, RenderContext context)
+        private void RenderCodeRun(InlineCollection inlineCollection, CodeInline element, XamlRenderContext context)
         {
             var border = new Border()
             {
@@ -1187,7 +1162,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// Removes leading whitespace, but only if this is the first run in the block.
         /// </summary>
         /// <returns>The corrected string</returns>
-        private string CollapseWhitespace(RenderContext context, string text)
+        private string CollapseWhitespace(XamlRenderContext context, string text)
         {
             bool dontOutputWhitespace = context.TrimLeadingWhitespace;
             StringBuilder result = null;
@@ -1228,7 +1203,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// Creates a new RichTextBlock, if the last element of the provided collection isn't already a RichTextBlock.
         /// </summary>
         /// <returns>The rich text block</returns>
-        private RichTextBox CreateOrReuseRichTextBlock(UIElementCollection blockUIElementCollection, RenderContext context)
+        private RichTextBox CreateOrReuseRichTextBlock(UIElementCollection blockUIElementCollection, XamlRenderContext context)
         {
             // Reuse the last RichTextBlock, if possible.
             if (blockUIElementCollection != null && blockUIElementCollection.Count > 0 && blockUIElementCollection[blockUIElementCollection.Count - 1] is RichTextBox)
@@ -1251,7 +1226,7 @@ namespace System.Windows.Controls.Markdown.Display
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
                 // IsUndoEnabled = false,
-                AcceptsReturn = false,                
+                AcceptsReturn = false,
                 // AcceptsTab = false
             };
 
@@ -1270,7 +1245,7 @@ namespace System.Windows.Controls.Markdown.Display
         /// Creates a new TextBlock, with default settings.
         /// </summary>
         /// <returns>The created TextBlock</returns>
-        private TextBlock CreateTextBlock(RenderContext context)
+        private TextBlock CreateTextBlock(XamlRenderContext context)
         {
             TextBlock result = new TextBlock
             {
@@ -1358,6 +1333,5 @@ namespace System.Windows.Controls.Markdown.Display
                 }
             }
         }
-
     }
 }

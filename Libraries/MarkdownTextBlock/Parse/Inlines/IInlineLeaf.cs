@@ -15,7 +15,7 @@ namespace System.Windows.Controls.Markdown.Parse
     /// <summary>
     /// Initializes a new instance of the <see cref="IInlineLeaf"/> class.
     /// </summary>
-    internal interface IInlineLeaf
+    public interface IInlineLeaf
     {
         /// <summary>
         /// Gets or sets the text for this run.

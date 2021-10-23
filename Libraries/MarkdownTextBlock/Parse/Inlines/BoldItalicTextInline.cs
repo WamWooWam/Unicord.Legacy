@@ -29,10 +29,10 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<ParseHelpers.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '*', Method = ParseHelpers.InlineParseMethod.BoldItalic });
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '_', Method = ParseHelpers.InlineParseMethod.BoldItalic });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '*', Method = InlineParseMethod.BoldItalic });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '_', Method = InlineParseMethod.BoldItalic });
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed bold text span, or <c>null</c> if this is not a bold text span. </returns>
-        internal static ParseHelpers.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             if (start >= maxEnd - 1)
             {
@@ -99,7 +99,7 @@ namespace System.Windows.Controls.Markdown.Parse
                     }
                 }
             };
-            return new ParseHelpers.InlineParseResult(bold, start, innerEnd + 3);
+            return new InlineParseResult(bold, start, innerEnd + 3);
         }
 
         /// <summary>

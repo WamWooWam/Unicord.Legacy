@@ -37,9 +37,9 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <summary>
         /// Returns the chars that if found means we might have a match.
         /// </summary>
-        internal static void AddTripChars(List<ParseHelpers.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '`', Method = ParseHelpers.InlineParseMethod.Code });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '`', Method = InlineParseMethod.Code });
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="maxEnd"> The location to stop parsing. </param>
         /// <returns> A parsed inline code span, or <c>null</c> if this is not an inline code span. </returns>
-        internal static ParseHelpers.InlineParseResult Parse(string markdown, int start, int maxEnd)
+        internal static InlineParseResult Parse(string markdown, int start, int maxEnd)
         {
             // Check the first char.
             if (start == maxEnd || markdown[start] != '`')
@@ -100,7 +100,7 @@ namespace System.Windows.Controls.Markdown.Parse
             {
                 Text = markdown.Substring(innerStart, innerEnd - innerStart).Trim(' ', '\t', '\r', '\n')
             };
-            return new ParseHelpers.InlineParseResult(result, start, end);
+            return new InlineParseResult(result, start, end);
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace DiscordLib
         /// Gets the color of this role.
         /// </summary>
         [JsonProperty("color", NullValueHandling = NullValueHandling.Ignore)]
-        public int Color { get; set; }
+        public uint Color { get; set; }
 
         /// <summary>
         /// Gets whether this role is hoisted.

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="2.8">
+    <id>Humanizer</id>
+    <version>2.12.30-gd3f3b9d3c6</version>
+    <authors>Mehdi Khalili, Claire Novotny</authors>
+    <licenseUrl>https://raw.githubusercontent.com/Humanizr/Humanizer/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Humanizr/Humanizer</projectUrl>
+    <description>A micro-framework that turns your normal strings, type names, enum fields, date fields ETC into a human friendly format</description>
+    <copyright>Copyright © .NET Foundation and Contributors</copyright>
+    <repository type="git" url="https://github.com/WamWooWam/Humanizer.git" commit="d3f3b9d3c69d7ebb9d0d87353b621336ca134e2a" />
+    <dependencies>
+      <group targetFramework="WindowsPhone7.5" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib.extensions" targetFramework="WindowsPhone7.5" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="WindowsPhone7.5" />
+      <frameworkAssembly assemblyName="System" targetFramework="WindowsPhone7.5" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

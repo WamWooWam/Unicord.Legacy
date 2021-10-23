@@ -15,7 +15,7 @@ namespace System.Windows.Controls.Markdown.Parse
     /// <summary>
     /// This is an internal class used as the base class of all markdown elements.
     /// </summary>
-    internal abstract class MarkdownElement
+    public abstract class MarkdownElement
     {
     }
 }

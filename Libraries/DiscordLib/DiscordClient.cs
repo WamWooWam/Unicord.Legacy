@@ -68,6 +68,14 @@ namespace DiscordLib
             return Socket.DisconnectAsync();
         }
 
+        public User GetCachedUser(ulong userId)
+        {
+            User user;
+            if (this.userCache.TryGetValue(userId, out user))
+                return user;
+            return null;
+        }
+
         public Channel GetCachedChannel(ulong channelId)
         {
             PrivateChannel foundPrivateChannel;

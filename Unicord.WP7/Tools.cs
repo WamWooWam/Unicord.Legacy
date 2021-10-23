@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Unicord.WP7
 {
-    public class Tools
+    public class Utils
     {
         public static void Scale(ref float currentWidth, ref float currentHeight, float maxWidth, float maxHeight)
         {

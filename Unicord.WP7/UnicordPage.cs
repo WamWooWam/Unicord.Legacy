@@ -32,6 +32,8 @@ namespace Unicord.WP7
             if (!IsolatedStorageSettings.ApplicationSettings.TryGetValue("LoginToken", out token))
                 NavigationService.Navigate(new Uri("/Unicord.WP7;component/LoginPage.xaml", UriKind.Relative));
 
+            IsolatedStorageSettings.ApplicationSettings.Save();
+
             var discord = App.Current.EnsureDiscordClient();
             if (discord != null)
             {

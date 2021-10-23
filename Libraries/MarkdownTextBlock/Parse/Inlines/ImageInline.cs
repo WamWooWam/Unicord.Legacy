@@ -42,9 +42,9 @@ namespace System.Windows.Controls.Markdown.Parse
 
         public string Text { get; set; }
 
-        internal static void AddTripChars(List<ParseHelpers.InlineTripCharHelper> tripCharHelpers)
+        internal static void AddTripChars(List<InlineTripCharHelper> tripCharHelpers)
         {
-            tripCharHelpers.Add(new ParseHelpers.InlineTripCharHelper() { FirstChar = '!', Method = ParseHelpers.InlineParseMethod.Image });
+            tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '!', Method = InlineParseMethod.Image });
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <param name="start"> The location to start parsing. </param>
         /// <param name="end"> The location to stop parsing. </param>
         /// <returns> A parsed markdown image, or <c>null</c> if this is not a markdown image. </returns>
-        internal static ParseHelpers.InlineParseResult Parse(string markdown, int start, int end)
+        internal static InlineParseResult Parse(string markdown, int start, int end)
         {
             // Expect a '!' character.
             if (start >= end || markdown[start] != '!')
@@ -126,7 +126,7 @@ namespace System.Windows.Controls.Markdown.Parse
                 Url = url,
                 Text = markdown.Substring(start, pos + 1 - start)
             };
-            return new ParseHelpers.InlineParseResult(result, start, pos + 1);
+            return new InlineParseResult(result, start, pos + 1);
         }
 
         /// <summary>

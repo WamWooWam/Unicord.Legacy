@@ -21,5 +21,10 @@ namespace Unicord.WP7
         {
             return string.Format("https://cdn.discordapp.com/icons/{0}/{1}.png?size=256", id, iconHash);
         }
+
+        public static string EmoteUrl(ulong id)
+        {
+            return string.Format("https://cdn.discordapp.com/emojis/{0}.png?size=128", id);
+        }
     }
 }
