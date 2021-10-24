@@ -2,6 +2,7 @@
 using System.Windows;
 using Unicord.WP7.Controls;
 using Unicord.WP7.ViewModels;
+using Unicord.WP7.ViewModels.Cache;
 
 namespace Unicord.WP7.Converters
 {
@@ -27,6 +28,15 @@ namespace Unicord.WP7.Converters
             if (item is MessageViewModel)
             {
                 var messageVM = item as MessageViewModel;
+                if (messageVM.IsOutgoing)
+                {
+                    return OutgoingTemplate;
+                }
+            }
+
+            if (item is MessageViewModelCache)
+            {
+                var messageVM = item as MessageViewModelCache;
                 if (messageVM.IsOutgoing)
                 {
                     return OutgoingTemplate;

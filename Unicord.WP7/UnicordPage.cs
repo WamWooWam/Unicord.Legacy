@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -66,5 +67,35 @@ namespace Unicord.WP7
         {
             await Dispatcher.InvokeAsync(() => _connectingProgress.IsVisible = false);
         }
+
+        protected ProgressContext GetProgressContext()
+        {
+            return new ProgressContext(this);
+        }
+
+        protected class ProgressContext : IDisposable
+        {
+            private UnicordPage _page;
+            private ProgressIndicator _oldIndicator;
+            private SynchronizationContext _syncContext;
+
+            public ProgressContext(UnicordPage page)
+            {
+                _page = page;
+                _oldIndicator = SystemTray.GetProgressIndicator(page);
+                _syncContext = SynchronizationContext.Current;
+
+                ProgressIndicator = new ProgressIndicator();
+                SystemTray.SetProgressIndicator(page, ProgressIndicator);
+            }
+
+            public ProgressIndicator ProgressIndicator { get; set; }
+
+            public void Dispose()
+            {
+                _syncContext.Post((o) => SystemTray.SetProgressIndicator(((ProgressContext)o)._page, ((ProgressContext)o)._oldIndicator), this);
+            }
+        }
+
     }
 }

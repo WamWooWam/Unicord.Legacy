@@ -34,7 +34,7 @@ namespace Unicord.WP7.ViewModels
                 foreach (var item in _guild.Channels.Values)
                 {
                     ReadState state;
-                    if (!App.Current.Discord.ReadStates.TryGetValue(item.Id, out state)) continue;
+                    if (!Discord.ReadStates.TryGetValue(item.Id, out state)) continue;
 
                     count += state.MentionCount;
                 }

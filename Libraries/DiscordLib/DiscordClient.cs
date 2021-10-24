@@ -22,6 +22,8 @@ namespace DiscordLib
 
         private ulong _currentUserId;
 
+        internal TaskCompletionSource<object> _connectionSource;
+
         internal ConcurrentDictionary<ulong, User> userCache;
         internal RingBuffer<Message> messageCache;
 
@@ -29,7 +31,7 @@ namespace DiscordLib
         public DiscordSocketClient Socket { get; private set; }
 
         public User CurrentUser { get { User u; return _currentUserId != 0 && userCache.TryGetValue(_currentUserId, out u) ? u : null; } }
-        public UserSettings CurrentUserSettings { get; internal set; }
+        public UserSettings UserSettings { get; internal set; }
 
         public ConcurrentDictionary<ulong, PrivateChannel> PrivateChannels { get; private set; }
         public ConcurrentDictionary<ulong, Guild> Guilds { get; private set; }
@@ -39,6 +41,8 @@ namespace DiscordLib
         public DiscordClient(string token)
         {
             _connectionLock = new ManualResetEvent(true);
+            _connectionSource = new TaskCompletionSource<object>();
+
             userCache = new ConcurrentDictionary<ulong, User>();
             messageCache = new RingBuffer<Message>(250);
 
@@ -51,16 +55,35 @@ namespace DiscordLib
 
         public async Task ConnectAsync()
         {
-            if (!_connectionLock.WaitOne(0)) throw new InvalidOperationException("Already connected!");
+            try
+            {
+                if (!_connectionLock.WaitOne(0)) throw new InvalidOperationException("Already connected!");
 
-            await Socket.connectingEvent.InvokeAsync();
+                await Socket.connectingEvent.InvokeAsync();
 
-            _gatewayUrl = await Rest.GetGatewayUrlAsync().ConfigureAwait(false);
+                _gatewayUrl = await Rest.GetGatewayUrlAsync().ConfigureAwait(false);
 
-            var currentUser = await Rest.GetCurrentUserAsync().ConfigureAwait(false);
-            _currentUserId = currentUser.Id;
+                var currentUser = await Rest.GetCurrentUserAsync().ConfigureAwait(false);
+                _currentUserId = currentUser.Id;
 
-            await Socket.ConnectAsync(_gatewayUrl).ConfigureAwait(false);
+                Socket.Ready += () =>
+                {
+                    _connectionSource.TrySetResult(null);
+                    return TaskEx.Delay(0);
+                };
+
+                await Socket.ConnectAsync(_gatewayUrl).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _connectionSource.TrySetException(ex);
+                throw;
+            }
+        }
+
+        public Task EnsureConnectedAsync()
+        {
+            return _connectionSource.Task;
         }
 
         public Task DisconnectAsync()

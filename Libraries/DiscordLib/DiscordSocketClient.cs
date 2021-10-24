@@ -42,6 +42,8 @@ namespace DiscordLib
         private WebSocket _webSocket;
         private TaskCompletionSource<object> _tcs;
 
+        public bool IsConnected { get; set; }
+
         internal DiscordSocketClient(DiscordClient client, string token)
         {
             _client = client;
@@ -70,6 +72,7 @@ namespace DiscordLib
 
         internal Task DisconnectAsync()
         {
+            IsConnected = false;
             _disconnecting = true;
             _tcs.TrySetCanceled();
 
@@ -91,6 +94,8 @@ namespace DiscordLib
 
         private async void OnSocketClosed(object sender, System.EventArgs e)
         {
+            IsConnected = false;
+
             Debug.WriteLine("Socket closed.");
 
             if (_disconnecting)
@@ -220,9 +225,11 @@ namespace DiscordLib
 
         private async Task HandleReadyAsync(GatewayPayload<ReadyPayload> payload)
         {
+            IsConnected = true;
+
             var readyPayload = payload.Data;
             _sessionId = readyPayload.SessionId;
-            _client.CurrentUserSettings = readyPayload.UserSettings;
+            _client.UserSettings = readyPayload.UserSettings;
 
             foreach (var guild in readyPayload.Guilds)
             {
@@ -247,6 +254,8 @@ namespace DiscordLib
 
         private async Task HandleResumedAsync(GatewayPayload<object> payload)
         {
+            IsConnected = true;
+
             Debug.WriteLine("Session resumed!");
             await resumedEvent.InvokeAsync();
         }

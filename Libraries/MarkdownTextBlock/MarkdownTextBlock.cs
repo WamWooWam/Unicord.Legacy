@@ -1303,9 +1303,10 @@ namespace System.Windows.Controls.Markdown
             task.Uri = new Uri(url);
             task.Show();
 
-            //// Fire off the event.
-            //LinkClickedEventArgs eventArgs = new LinkClickedEventArgs(url);
-            //LinkClicked?.Invoke(this, eventArgs);
+            // Fire off the event.
+            LinkClickedEventArgs eventArgs = new LinkClickedEventArgs(url);
+            if (LinkClicked != null)
+                LinkClicked.Invoke(this, eventArgs);
         }
 
         /// <summary>

@@ -29,15 +29,7 @@ namespace Unicord.WP7
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var timer = new DispatcherTimer();
-            timer.Tick += (o, ev) =>
-            {
-                timer.Stop();
-                ShowLoginStoryboard.Begin();
-            };
-
-            timer.Interval = TimeSpan.FromMilliseconds(1);
-            timer.Start();
+            Utils.SetImmediate(() => ShowLoginStoryboard.Begin());
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)

@@ -18,7 +18,8 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    Loaded="UnicordPage_Loaded">
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
             <toolkit:NavigationInTransition.Backward>
@@ -66,7 +67,7 @@
                            HorizontalAlignment="Stretch"
                            Stretch="UniformToFill"
                            Source="{Binding ImageSource}" />
-                    
+
                     <Grid Margin="0" Background="{StaticResource PhoneSubtleBrush}" Grid.Row="1" Grid.Column="1">
                         <Border Padding="0,5,0,5">
                             <markdown:MarkdownTextBlock Text="{Binding Content}" TextWrapping="Wrap" Grid.Row="0" />
@@ -124,7 +125,8 @@
                            Grid.Row="2"
                            HorizontalAlignment="Stretch"
                            Stretch="UniformToFill"
-                           Source="{Binding ImageSource}" />
+                           Source="{Binding ImageSource}"
+                           Tap="Image_Tap" />
 
                     <Grid Margin="0" Background="{StaticResource PhoneAccentBrush}" Grid.Row="1">
                         <Border Padding="0,5,0,5">
@@ -161,6 +163,41 @@
             </Grid>
         </DataTemplate>
 
+
+        <Style x:Key="MessageListBoxStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <ScrollViewer x:Name="ScrollViewer"
+                                      Loaded="ScrollViewer_Loaded"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      Padding="{TemplateBinding Padding}">
+                            <StackPanel SizeChanged="OnContentSizeChanged">
+                                
+                                <!--<TextBlock Text="Pull to load more messages"
+                                           Padding="20"
+                                           TextAlignment="Center"
+                                           Foreground="{StaticResource PhoneSubtleBrush}"/>-->
+                                
+                                <ItemsPresenter />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <converters:LowerCaseConverter x:Key="LowerCaseConverter" />
         <converters:UpperCaseConverter x:Key="UpperCaseConverter" />
         <converters:ChannelCaseConverter x:Key="ChannelCaseConverter" />
@@ -196,7 +233,9 @@
                      ItemsSource="{Binding Messages}"
                      HorizontalAlignment="Stretch"
                      HorizontalContentAlignment="Stretch"
-                     SelectionChanged="MessagesList_SelectionChanged">
+                     VerticalAlignment="Stretch"
+                     SelectionChanged="MessagesList_SelectionChanged"
+                     Style="{StaticResource MessageListBoxStyle}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <converters:MessageTypeTemplateSelector Content="{Binding}" 
@@ -248,14 +287,9 @@
                                                 Text="Upload"
                                                 Click="UploadButton_Click"/>
             </shell:ApplicationBar.Buttons>
-            <!--<shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="Item1"/>
-                <shell:ApplicationBarMenuItem Text="Item2"/>
-                <shell:ApplicationBarMenuItem Text="Item3"/>
-                <shell:ApplicationBarMenuItem Text="Item4"/>
-                <shell:ApplicationBarMenuItem Text="Item5"/>
-                <shell:ApplicationBarMenuItem Text="Item6"/>
-            </shell:ApplicationBar.MenuItems>-->
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="Pin to Start" Click="ApplicationBarMenuItem_Click"/>
+            </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </local:UnicordPage.ApplicationBar>
 </local:UnicordPage>

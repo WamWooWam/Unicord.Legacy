@@ -93,6 +93,7 @@ namespace System.Windows.Controls.Markdown.Parse
             tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '/', Method = InlineParseMethod.RedditLink });
             tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '.', Method = InlineParseMethod.PartialLink });
             tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '@', Method = InlineParseMethod.Email });
+            //tripCharHelpers.Add(new InlineTripCharHelper() { FirstChar = '[', Method = InlineParseMethod.MarkdownLink });
         }
 
         /// <summary>

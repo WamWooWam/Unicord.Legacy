@@ -16,6 +16,8 @@ using DiscordLib;
 using System.IO.IsolatedStorage;
 using System.Windows.Controls.Markdown;
 using Unicord.WP7.Markdown;
+using System.Diagnostics;
+using Microsoft.Phone.Info;
 
 namespace Unicord.WP7
 {
@@ -68,7 +70,7 @@ namespace Unicord.WP7
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
 
-
+            Debug.WriteLine(DeviceExtendedProperties.GetValue("ApplicationWorkingSetLimit"));
             MarkdownTextBlock.RegisterCustomInline<DiscordInline>(new DiscordInlineParser(), new DiscordInlineRenderer());
         }
 

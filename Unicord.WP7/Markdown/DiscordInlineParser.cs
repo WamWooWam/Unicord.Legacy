@@ -151,8 +151,8 @@ namespace Unicord.WP7.Markdown
                 format = TimestampFormat.ShortDateTime;
             }
 
-            Debug.WriteLine(timestampText);
-            Debug.WriteLine(format);
+            //Debug.WriteLine(timestampText);
+            //Debug.WriteLine(format);
 
             long timestamp;
             if (!long.TryParse(timestampText, out timestamp))

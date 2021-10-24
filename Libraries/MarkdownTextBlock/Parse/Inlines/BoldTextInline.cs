@@ -96,7 +96,7 @@ namespace System.Windows.Controls.Markdown.Parse
                 Inlines = ParseHelpers.ParseInlineChildren(markdown, innerStart, innerEnd)
             };
 
-            Debug.WriteLine(string.Format("{0} {1}", markdown[innerStart], markdown[innerEnd]));
+            // Debug.WriteLine(string.Format("{0} {1}", markdown[innerStart], markdown[innerEnd]));
 
             return new InlineParseResult(result, start, innerEnd + 2);
         }

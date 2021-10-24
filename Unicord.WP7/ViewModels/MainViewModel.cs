@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Unicord.WP7.ViewModels
 {
@@ -17,55 +18,72 @@ namespace Unicord.WP7.ViewModels
         public MainViewModel()
         {
             _syncContext = SynchronizationContext.Current;
-
-            var discord = App.Current.EnsureDiscordClient();
-            if (discord == null) return;
+            if (Discord == null)
+                return;
 
             Guilds = new ObservableCollection<GuildViewModel>(
-                discord.Guilds.Values.Select(g => new GuildViewModel(g)));
+                Discord.Guilds.Values.Select(g => new GuildViewModel(g)));
 
             DirectMessages = new ObservableCollection<ChannelViewModel>(
-                discord.PrivateChannels.Values
+                Discord.PrivateChannels.Values
                     .Where(c => c.Type == ChannelType.Private)
-                    .Select(c => new ChannelViewModel(c)));
+                    .Select(c => new ChannelViewModel(c))
+            );
 
-            discord.Socket.Ready += OnReady;
-            discord.Socket.GuildCreated += OnGuildCreated;
+            Discord.Socket.Ready += OnReady;
+            Discord.Socket.GuildCreated += OnGuildCreated;
         }
 
         private Task OnReady()
         {
+            _syncContext.Post((o) =>
+            {
+                Guilds.Clear();
+                DirectMessages.Clear();
+            }, null);
+
             var guilds = new ObservableCollection<GuildViewModel>();
-            var folders = App.Current.Discord.CurrentUserSettings.GuildFolders;
+            var folders = Discord.UserSettings.GuildFolders;
             foreach (var folder in folders)
             {
                 Guild guild;
                 foreach (var guildId in folder.GuildIds)
                 {
-                    if (App.Current.Discord.Guilds.TryGetValue(guildId, out guild))
+                    if (Discord.Guilds.TryGetValue(guildId, out guild))
                         guilds.Add(new GuildViewModel(guild));
                 }
             }
 
-            foreach (var guild in App.Current.Discord.Guilds.Values)
+            foreach (var guild in Discord.Guilds.Values)
             {
                 if (!guilds.Any(g => g.Id == guild.Id))
                     guilds.Insert(0, new GuildViewModel(guild));
             }
 
             var channels = new ObservableCollection<ChannelViewModel>();
-            foreach (var channel in App.Current.Discord.PrivateChannels.Values)
+            foreach (var channel in Discord.PrivateChannels.Values)
             {
                 if (channel.Type == ChannelType.Private)
                     channels.Add(new ChannelViewModel(channel));
             }
 
-            _syncContext.Post((o) =>
+            foreach (var item in guilds)
             {
-                Guilds = guilds;
-                DirectMessages = channels;
-                InvokePropertyChanged("");
-            }, null);
+                _syncContext.Post((g) => Guilds.Add((GuildViewModel)g), item);
+            }
+
+            foreach (var item in channels)
+            {
+                _syncContext.Post((c) => DirectMessages.Add((ChannelViewModel)c), item);
+            }
+
+
+            //_syncContext.Post((o) =>
+            //{
+            //    Guilds = guilds;
+            //    DirectMessages = channels;
+            //    InvokePropertyChanged("");
+            //}, null);
             return TaskEx.Delay(0);
         }
 
@@ -85,15 +103,16 @@ namespace Unicord.WP7.ViewModels
                 else
                     Guilds.Insert(0, new GuildViewModel(e.Guild));
             }, null);
+
             return TaskEx.Delay(0);
         }
 
         public void Dispose()
         {
-            if (App.Current.Discord != null)
+            if (Discord != null)
             {
-                App.Current.Discord.Socket.Ready -= OnReady;
-                App.Current.Discord.Socket.GuildCreated -= OnGuildCreated;
+                Discord.Socket.Ready -= OnReady;
+                Discord.Socket.GuildCreated -= OnGuildCreated;
             }
         }
     }

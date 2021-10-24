@@ -17,12 +17,25 @@ namespace DiscordLib.Net.Payloads
         public int? Sequence { get; internal set; }
         [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
         public string EventName { get; internal set; }
+
+
+        public static GatewayPayload<T> Create<T>(GatewayPayload payload, JsonReader reader, JsonSerializer serialiser)
+        {
+            var newPayload = new GatewayPayload<T>();
+            newPayload.OpCode = payload.OpCode;
+            newPayload.Sequence = payload.Sequence;
+            newPayload.EventName = payload.EventName;
+            newPayload.Data = serialiser.Deserialize<T>(reader);
+
+            return newPayload;
+        }
     }
 
     internal class GatewayPayload<T> : GatewayPayload
     {
         [JsonProperty("d")]
         public T Data { get; internal set; }
+
     }
 
     /// <summary>

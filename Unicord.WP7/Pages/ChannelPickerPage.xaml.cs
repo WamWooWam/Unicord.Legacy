@@ -26,7 +26,6 @@ namespace Unicord.WP7.Pages
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
             var id = ulong.Parse(NavigationContext.QueryString["id"]);
             DataContext = _pickerModel = new ChannelPickerViewModel(id);
         }
@@ -34,10 +33,27 @@ namespace Unicord.WP7.Pages
         private void LongListSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = e.AddedItems.OfType<Channel>().FirstOrDefault();
-            if (item != null && item.Type.IsText())
+            if (item != null)
             {
-                App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/Pages/ChannelPage.xaml?id=" + item.Id, UriKind.Relative));
+                if (item.Type.IsText())
+                {
+                    App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/Pages/ChannelPage.xaml?id=" + item.Id, UriKind.Relative));
+                }
+                else
+                {
+                    MessageBox.Show("This channel type is not currently supported by your device!", "Unsupported channel", MessageBoxButton.OK);
+                }
             }
+
+            ChannelList.SelectedItem = null;
+        }
+
+        private void UnicordPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Utils.SetImmediate(() =>
+            {
+                _pickerModel.Guild.InitialiseLists();
+            });
         }
     }
 }

@@ -158,7 +158,8 @@ namespace Unicord.WP7.Markdown
                 {
                     Source = new BitmapImage(new Uri(uri)),
                     Height = EMOTE_SIZE,
-                    MaxWidth = EMOTE_SIZE * 3
+                    MaxWidth = EMOTE_SIZE * 3,
+                    Margin = new Thickness(0, -4, 0, -8)
                 }
             };
 
@@ -221,7 +222,7 @@ namespace Unicord.WP7.Markdown
 
             var colour = Color.FromArgb(255, (byte)((role.Color & 0xff0000) >> 16), (byte)((role.Color & 0xff00) >> 8), (byte)(role.Color & 0xff));
             var hsbColor = HSBColor.FromColor(colour);
-            hsbColor.B = Math.Min(hsbColor.B *= 1.1, 1);
+            hsbColor.B = Math.Min(hsbColor.B * 1.1, 1);
 
             return new SolidColorBrush(hsbColor.ToColor());
         }

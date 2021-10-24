@@ -75,6 +75,10 @@
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\sl4-windowsphone71\Microsoft.Threading.Tasks.Extensions.Phone.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO, Version=1.5.11.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\sl4-windowsphone71\System.IO.dll</HintPath>
       <Private>True</Private>
@@ -123,6 +127,9 @@
     <Compile Include="Markdown\DiscordInlineRenderer.cs" />
     <Compile Include="Markdown\MentionType.cs" />
     <Compile Include="Markdown\TimespanType.cs" />
+    <Compile Include="Pages\AttachmentPage.xaml.cs">
+      <DependentUpon>AttachmentPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ChannelPage.xaml.cs">
       <DependentUpon>ChannelPage.xaml</DependentUpon>
     </Compile>
@@ -148,6 +155,8 @@
     <Compile Include="Tools\HSBColor.cs" />
     <Compile Include="UnicordPage.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\Cache\ChannelPageViewModelCache.cs" />
+    <Compile Include="ViewModels\Cache\MessageViewModelCache.cs" />
     <Compile Include="ViewModels\ChannelPageViewModel.cs" />
     <Compile Include="ViewModels\ChannelPickerViewModel.cs" />
     <Compile Include="ViewModels\ChannelViewModel.cs" />
@@ -162,6 +171,10 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Page Include="LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\AttachmentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,6 +197,7 @@
     <None Include="Properties\WMAppManifest.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Unicord.WP7_2021_10_23_17_09_27.sap" />
     <Resource Include="Resources\SegoeUIMono.ttf" />
   </ItemGroup>
   <ItemGroup>

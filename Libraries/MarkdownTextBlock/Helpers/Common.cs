@@ -156,7 +156,6 @@ namespace System.Windows.Controls.Markdown.Helpers
             SuperscriptTextInline.AddTripChars(_triggerList);
             CodeInline.AddTripChars(_triggerList);
             ImageInline.AddTripChars(_triggerList);
-            //DiscordInline.AddTripChars(_triggerList);
 
             // Create an array of characters to search against using IndexOfAny.
             _tripCharacters = _triggerList.Select(trigger => trigger.FirstChar).Distinct().ToArray();
@@ -204,6 +203,7 @@ namespace System.Windows.Controls.Markdown.Helpers
 
             return inlines;
         }
+
         /// <summary>
         /// Finds the next inline element by matching trip chars and verifying the match.
         /// </summary>

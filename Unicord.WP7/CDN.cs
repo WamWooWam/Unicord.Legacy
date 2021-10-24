@@ -14,7 +14,7 @@ namespace Unicord.WP7
                 return string.Format("https://cdn.discordapp.com/avatars/{0}/{1}.png?size=64", id, avatarHash);
             }
 
-            return string.Format("https://cdn.discordapp.com/embed/avatars/{0}.png?size=64", int.Parse(discriminator) % 5);
+            return string.Format("https://cdn.discordapp.com/embed/avatars/{0}.jpg?size=64", int.Parse(discriminator) % 5);
         }
 
         public static string IconUrl(ulong id, string iconHash)
@@ -22,9 +22,9 @@ namespace Unicord.WP7
             return string.Format("https://cdn.discordapp.com/icons/{0}/{1}.png?size=256", id, iconHash);
         }
 
-        public static string EmoteUrl(ulong id)
+        public static string EmoteUrl(ulong id, int size = 128)
         {
-            return string.Format("https://cdn.discordapp.com/emojis/{0}.png?size=128", id);
+            return string.Format("https://cdn.discordapp.com/emojis/{0}.png?size={1}", id, size);
         }
     }
 }

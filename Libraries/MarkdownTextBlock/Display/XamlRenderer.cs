@@ -1065,10 +1065,6 @@ namespace System.Windows.Controls.Markdown.Display
             inlineCollection.Add(span);
         }
 
-        //private void RenderDiscord(InlineCollection inlineCollection, DiscordInline element, XamlRenderContext context)
-        //{
-        //}
-
         /// <summary>
         /// Renders a superscript element.
         /// </summary>

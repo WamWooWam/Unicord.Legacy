@@ -23,12 +23,14 @@ namespace Unicord.WP7.ViewModels
 
     public class ChannelPageViewModel : ChannelViewModel
     {
+        private bool _isLoading = false;
+
         public ChannelPageViewModel(Channel channel)
             : base(channel)
         {
             Messages = new ObservableCollection<MessageViewModel>();
-            App.Current.Discord.Socket.MessageCreated += OnMessageCreated;
-            App.Current.Discord.Socket.MessageDeleted += OnMessageDeleted;
+            Discord.Socket.MessageCreated += OnMessageCreated;
+            Discord.Socket.MessageDeleted += OnMessageDeleted;
         }
 
         public string Title { get { return !string.IsNullOrWhiteSpace(channel.Name) ? channel.Name : dm.Recipients[0].Username; } }
@@ -39,13 +41,27 @@ namespace Unicord.WP7.ViewModels
 
         public async Task LoadAsync()
         {
-            var messages = await App.Current.Discord.Rest.GetMessagesAsync(channel, 25);
-            syncContext.Post(d =>
+            try
             {
-                Messages.Clear();
-                foreach (var item in messages.Select(m => new MessageViewModel(m)).Reverse())
-                    Messages.Add(item);
-            }, this);
+                if (_isLoading) return;
+                _isLoading = true;
+
+                var message = Messages.FirstOrDefault();
+                var messages = await App.Current.Discord.Rest.GetMessagesAsync(channel, 25, (message != null) ? message.Id : (ulong?)null);
+                syncContext.Post(d =>
+                {
+                    foreach (var item in messages.Select(m => new MessageViewModel(m)))
+                        Messages.Insert(0, item);
+                }, this);
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                _isLoading = false;
+            }
         }
 
         private Task OnMessageCreated(MessageCreateEventArgs e)

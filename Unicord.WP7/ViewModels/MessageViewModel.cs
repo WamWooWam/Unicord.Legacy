@@ -33,6 +33,7 @@ namespace Unicord.WP7.ViewModels
             this.message = message;
         }
 
+        public Message Message { get { return message; } }
         public User Author { get { return message.Author; } }
         public Channel Channel { get { return Discord.GetCachedChannel(message.ChannelId); } }
         public Guild Guild { get { return Discord.GetCachedGuild(Channel.GuildId); } }

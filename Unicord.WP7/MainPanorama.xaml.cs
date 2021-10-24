@@ -35,6 +35,8 @@ namespace Unicord.WP7
             {
                 DataContext = _viewModel = new MainViewModel();
             }
+
+            Utils.SetImmediate(() => ShowStoryboard.Begin());
         }
 
         private void GuildHubTile_Tap(object sender, GestureEventArgs e)

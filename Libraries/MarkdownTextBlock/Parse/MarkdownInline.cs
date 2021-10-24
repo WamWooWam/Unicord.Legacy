@@ -72,9 +72,7 @@ namespace System.Windows.Controls.Markdown.Parse
         /// <summary>
         /// A custom inline
         /// </summary>
-        Custom,
-
-        // Discord
+        Custom
     }
 
     /// <summary>

@@ -54,7 +54,39 @@ namespace DiscordLib
             var request = new RestRequest(string.Format("users/{0}", userId));
             var response = await _restClient.SendRequestAsync<User>(request);
             var user = response.Content;
+
             return _client.userCache.AddOrUpdate(user.Id, user, (id, u) => u.Update(user));
+        }
+
+        public async Task<Guild> GetGuildAsync(ulong guildId)
+        {
+            var request = new RestRequest(string.Format("guilds/{0}", guildId));
+            var response = await _restClient.SendRequestAsync<Guild>(request);
+            var guild = response.Content;
+
+            return _client.Guilds.AddOrUpdate(guild.Id, guild, (id, u) => u.Update(guild));
+        }
+
+        public async Task<Channel> GetChannelAsync(ulong channelId)
+        {
+            var request = new RestRequest(string.Format("channels/{0}", channelId));
+            var response = await _restClient.SendRequestAsync<Channel>(request);
+            var channel = response.Content;
+
+            if (channel.GuildId != 0)
+            {
+                var guild = _client.GetCachedGuild(channel.GuildId);
+                if (guild == null)
+                {
+                    guild = await GetGuildAsync(channel.GuildId);
+                }
+
+                return guild.Channels.AddOrUpdate(channel.Id, channel, (id, c) => c.Update(channel));
+            }
+
+            return channel;
+
+            //return _client.PrivateChannels.AddOrUpdate(channel.Id, channel, (id, c) => c.Update(channel));
         }
 
         public async Task<Message> CreateMessageAsync(ulong channelId, string content, bool tts)
