@@ -37,6 +37,7 @@ namespace Unicord.WP7.ViewModels
                     if (!Discord.ReadStates.TryGetValue(item.Id, out state)) continue;
 
                     count += state.MentionCount;
+                    break;
                 }
 
                 return count;

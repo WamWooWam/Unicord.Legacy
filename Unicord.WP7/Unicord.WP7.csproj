@@ -198,6 +198,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Unicord.WP7_2021_10_23_17_09_27.sap" />
+    <None Include="Unicord.WP7_2021_10_24_23_13_21.sap" />
     <Resource Include="Resources\SegoeUIMono.ttf" />
   </ItemGroup>
   <ItemGroup>

@@ -84,7 +84,7 @@ namespace Unicord.WP7.ViewModels
 
                     Utils.Scale(ref width, ref height, 384, 600);
 
-                    return string.Concat(message.Attachments[0].ProxyUrl, "?format=jpeg&width=", width, "&height=", height);
+                    return string.Concat(message.Attachments[0].ProxyUrl, "?format=jpeg&width=", Math.Ceiling(width), "&height=", Math.Ceiling(height));
                 }
 
                 return null;

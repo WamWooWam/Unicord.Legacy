@@ -53,7 +53,6 @@ namespace Unicord.WP7.Markdown
                     Debug.WriteLine("Unknown inline type");
                     break;
             }
-
         }
 
         private static void RenderUser(CustomXamlInlineRenderContext context, DiscordInline inline, DiscordClient client, Guild guild)
@@ -163,14 +162,16 @@ namespace Unicord.WP7.Markdown
                 }
             };
 
+            context.Inlines.Add(new Run() { Text = "\x200B" });
             context.Inlines.Add(ui);
         }
 
         private static void RenderTimestamp(CustomXamlInlineRenderContext context, DiscordInline inline)
         {
             var run = new Run() { FontWeight = FontWeights.SemiBold };
-            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(inline.Timestamp).ToLocalTime();
+            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                .AddSeconds(inline.Timestamp)
+                .ToLocalTime();
 
             switch (inline.TimestampFormat)
             {

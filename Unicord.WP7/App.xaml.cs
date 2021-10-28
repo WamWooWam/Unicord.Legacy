@@ -70,7 +70,7 @@ namespace Unicord.WP7
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
 
-            Debug.WriteLine(DeviceExtendedProperties.GetValue("ApplicationWorkingSetLimit"));
+            // Debug.WriteLine(DeviceExtendedProperties.GetValue("ApplicationWorkingSetLimit"));
             MarkdownTextBlock.RegisterCustomInline<DiscordInline>(new DiscordInlineParser(), new DiscordInlineRenderer());
         }
 
@@ -81,7 +81,7 @@ namespace Unicord.WP7
                 string token;
                 if (!IsolatedStorageSettings.ApplicationSettings.TryGetValue("LoginToken", out token))
                     return null;
-
+                                
                 App.Current.Discord = new DiscordClient(token);
             }
 

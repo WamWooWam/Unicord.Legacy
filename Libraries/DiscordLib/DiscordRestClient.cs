@@ -1,5 +1,6 @@
 ﻿using DiscordLib.Net;
 using DiscordLib.Net.Http;
+using Microsoft.Phone.Info;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -18,13 +19,14 @@ namespace DiscordLib
         private RestClient _restClient;
         private DiscordClient _client;
 
-        private const string _ieUA = "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; Microsoft; XDeviceEmulator)";
+        private const string _ieUAFormat = "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; {0}; {1})";
         private const string _botUA = "DiscordBot (https://wamwoowam.co.uk, 1.0.0), Windows Phone 7.5";
 
         internal DiscordRestClient(DiscordClient client, string token)
         {
             _client = client;
-            _restClient = new RestClient(new Uri("https://discordapp.com/api/v9"), _ieUA);
+            _restClient = new RestClient(new Uri("https://discordapp.com/api/v9/"), 
+                string.Format(_ieUAFormat, DeviceStatus.DeviceManufacturer, DeviceStatus.DeviceName));
             _restClient.Headers.TryAddWithoutValidation("Authorization", token);
         }
 

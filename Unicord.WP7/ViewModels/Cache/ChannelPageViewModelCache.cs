@@ -17,7 +17,7 @@ namespace Unicord.WP7.ViewModels.Cache
             SubTitle = model.SubTitle;
             Messages = model.Messages.Skip(Math.Max(0, model.Messages.Count - 8))
                                      .Select(m => new MessageViewModelCache(m))
-                                     .ToList();
+                                     .ToArray();
         }
 
         [JsonProperty("title")]
@@ -27,6 +27,6 @@ namespace Unicord.WP7.ViewModels.Cache
         public string SubTitle { get; set; }
 
         [JsonProperty("messages")]
-        public List<MessageViewModelCache> Messages { get; set; }
+        public MessageViewModelCache[] Messages { get; set; }
     }
 }

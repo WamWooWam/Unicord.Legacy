@@ -315,7 +315,8 @@ namespace Unicord.WP7.Pages
                     }
                 });
 
-                await App.Current.Discord.Rest.CreateMessageAsync(_viewModel.Id, fileName, e.ChosenPhoto, progress).ConfigureAwait(false);
+                await App.Current.Discord.Rest.CreateMessageAsync(_viewModel.Id, fileName, e.ChosenPhoto, progress)
+                                              .ConfigureAwait(false);
             }
         }
 
@@ -353,7 +354,7 @@ namespace Unicord.WP7.Pages
             if (attachment != null)
             {
                 App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/Pages/AttachmentPage.xaml?url=" + HttpUtility.UrlEncode(attachment.Url), UriKind.Relative));
-            }            
+            }
         }
     }
 }

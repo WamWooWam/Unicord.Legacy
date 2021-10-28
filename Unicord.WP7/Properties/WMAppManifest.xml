@@ -20,7 +20,7 @@
       <Capability Name="ID_CAP_INTEROPSERVICES" />
     </Capabilities>
     <FunctionalCapabilities>
-      <FunctionalCapability Name="ID_FUNCCAP_EXTEND_MEM"/>
+      <FunctionalCapability Name="ID_FUNCCAP_EXTEND_MEM" />
     </FunctionalCapabilities>
     <Tasks>
       <DefaultTask Name="_default" NavigationPage="LoginPage.xaml" />
