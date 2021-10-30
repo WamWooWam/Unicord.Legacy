@@ -34,9 +34,16 @@ namespace Unicord.WP7
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            IsolatedStorageSettings.ApplicationSettings.Add("LoginToken", PasswordTextBox.Password);
+            var token = PasswordTextBox.Password.Trim().Trim('"');
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                MessageBox.Show("Your token cannot be empty!");
+                return;
+            }
 
-            App.Current.Discord = new DiscordLib.DiscordClient(PasswordTextBox.Password);
+            IsolatedStorageSettings.ApplicationSettings.Add("LoginToken", token);
+
+            App.Current.Discord = new DiscordLib.DiscordClient(token);
             App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/MainPanorama.xaml", UriKind.Relative));
         }
 

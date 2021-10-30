@@ -17,7 +17,6 @@
       <Capability Name="ID_CAP_ISV_CAMERA" />
       <Capability Name="ID_CAP_CONTACTS" />
       <Capability Name="ID_CAP_APPOINTMENTS" />
-      <Capability Name="ID_CAP_INTEROPSERVICES" />
     </Capabilities>
     <FunctionalCapabilities>
       <FunctionalCapability Name="ID_FUNCCAP_EXTEND_MEM" />

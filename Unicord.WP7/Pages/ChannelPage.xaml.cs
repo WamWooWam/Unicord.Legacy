@@ -271,12 +271,16 @@ namespace Unicord.WP7.Pages
         {
             if (e.Key == Key.Enter)
             {
-                var text = MessageTextBox.Text;
-                MessageTextBox.Text = "";
-
-                if (!string.IsNullOrWhiteSpace(text))
-                    await App.Current.Discord.Rest.CreateMessageAsync(_viewModel.Id, text, false);
             }
+        }
+
+        private async void SendButton_Click(object sender, EventArgs e)
+        {
+            var text = MessageTextBox.Text;
+            MessageTextBox.Text = "";
+
+            if (!string.IsNullOrWhiteSpace(text))
+                await App.Current.Discord.Rest.CreateMessageAsync(_viewModel.Id, text, false);
         }
 
         private void MessagesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -351,7 +355,7 @@ namespace Unicord.WP7.Pages
             var messageViewModel = (sender as FrameworkElement).DataContext as MessageViewModel;
             var message = messageViewModel.Message;
             var attachment = message.Attachments.FirstOrDefault();
-            if (attachment != null)
+            if (attachment != null && attachment.Width != 0)
             {
                 App.Current.RootFrame.Navigate(new Uri("/Unicord.WP7;component/Pages/AttachmentPage.xaml?url=" + HttpUtility.UrlEncode(attachment.Url), UriKind.Relative));
             }

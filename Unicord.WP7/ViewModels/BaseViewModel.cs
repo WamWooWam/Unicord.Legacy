@@ -19,7 +19,7 @@ namespace Unicord.WP7.ViewModels
         {
             // capture the sync context used for this VM
             syncContext = SynchronizationContext.Current;
-            discord = App.Current.Discord;
+            discord = App.Current.EnsureDiscordClient();
         }
 
         public DiscordClient Discord { get { return discord; } }

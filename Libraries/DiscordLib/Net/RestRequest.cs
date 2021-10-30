@@ -10,6 +10,10 @@ namespace DiscordLib.Net
 {
     internal class RestRequest
     {
+        // WP7 has weird caching issues that requires an If-Modified-Since header
+        // but on WP8+ this can cause Discord to return a 304 Not Modified response ://
+        private static bool _isWP8OrLater = Environment.OSVersion.Version.Major > 7;
+
         public RestRequest(Uri url, string method = "GET")
         {
             Url = url;
@@ -33,7 +37,8 @@ namespace DiscordLib.Net
                 message.Headers.Add(header.Key, header.Value);
 
             message.Headers.CacheControl = new CacheControlHeaderValue() { NoCache = true };
-            message.Headers.IfModifiedSince = DateTimeOffset.UtcNow;
+            if (!_isWP8OrLater)
+                message.Headers.IfModifiedSince = DateTimeOffset.Now;
 
             return message;
         }

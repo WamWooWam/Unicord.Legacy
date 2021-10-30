@@ -252,7 +252,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Margin="0" Background="{StaticResource PhoneSubtleBrush}" Grid.Row="0" Grid.Column="1">
-                    <TextBox x:Name="MessageTextBox" Style="{StaticResource InlineTextBoxStyle}" InputScope="Chat" KeyUp="TextBox_KeyUp" Foreground="White" Padding="10">
+                    <TextBox x:Name="MessageTextBox" Style="{StaticResource InlineTextBoxStyle}" InputScope="Chat" AcceptsReturn="True" TextWrapping="Wrap" Foreground="White" Padding="10">
                         <interactivity:Interaction.Behaviors>
                             <behaviours:WatermarkBehaviour Text="Send a message..." Foreground="LightGray" />
                         </interactivity:Interaction.Behaviors>
@@ -277,9 +277,13 @@
         <shell:ApplicationBar IsVisible="True">
             <shell:ApplicationBar.Buttons>
                 <shell:ApplicationBarIconButton x:Name="UploadButton"
-                                                IconUri="/Images/Toolkit.Content/ApplicationBar.Add.png" 
+                                                IconUri="/Images/upload.png" 
                                                 Text="Upload"
                                                 Click="UploadButton_Click"/>
+                <shell:ApplicationBarIconButton x:Name="SendButton"
+                                                IconUri="/Images/next.png" 
+                                                Text="Send"
+                                                Click="SendButton_Click"/>
             </shell:ApplicationBar.Buttons>
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="Pin to Start" Click="ApplicationBarMenuItem_Click"/>
