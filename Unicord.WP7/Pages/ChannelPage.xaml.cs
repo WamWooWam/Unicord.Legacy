@@ -22,6 +22,7 @@ using System.IO.IsolatedStorage;
 using Newtonsoft.Json;
 using Unicord.WP7.ViewModels.Cache;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Unicord.WP7.Pages
 {
@@ -129,18 +130,24 @@ namespace Unicord.WP7.Pages
         private void UpdateViewModelCache()
         {
             if (_viewModel == null) return;
-
-            var serializer = new JsonSerializer();
-            var store = IsolatedStorageFile.GetUserStoreForApplication();
-            var fileName = string.Format("channel-cache_{0}.json", _viewModel.Id);
-            using (var stream = store.OpenFile(fileName, FileMode.OpenOrCreate))
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                using (var streamWriter = new StreamWriter(stream))
-                using (var jsonWriter = new JsonTextWriter(streamWriter))
+            try
+            {                
+                var serializer = new JsonSerializer();
+                var store = IsolatedStorageFile.GetUserStoreForApplication();
+                var fileName = string.Format("channel-cache_{0}.json", _viewModel.Id);
+                using (var stream = store.OpenFile(fileName, FileMode.OpenOrCreate))
                 {
-                    serializer.Serialize(streamWriter, new ChannelPageViewModelCache(_viewModel));
+                    stream.Seek(0, SeekOrigin.Begin);
+                    using (var streamWriter = new StreamWriter(stream))
+                    using (var jsonWriter = new JsonTextWriter(streamWriter))
+                    {
+                        serializer.Serialize(streamWriter, new ChannelPageViewModelCache(_viewModel));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to save channel cache!!\r\n{0}", ex);
             }
         }
 

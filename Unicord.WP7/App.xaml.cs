@@ -18,6 +18,7 @@ using System.Windows.Controls.Markdown;
 using Unicord.WP7.Markdown;
 using System.Diagnostics;
 using Microsoft.Phone.Info;
+using System.Reflection.Emit;
 
 namespace Unicord.WP7
 {
@@ -48,7 +49,7 @@ namespace Unicord.WP7
             InitializePhoneApplication();
 
             // Show graphics profiling information while debugging.
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
                 // Display the current frame rate counters.
                 Application.Current.Host.Settings.EnableFrameRateCounter = true;
@@ -123,10 +124,10 @@ namespace Unicord.WP7
         // Code to execute if a navigation fails
         private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
                 // A navigation has failed; break into the debugger
-                System.Diagnostics.Debugger.Break();
+                Debugger.Break();
             }
         }
 
@@ -135,10 +136,10 @@ namespace Unicord.WP7
         {
             MessageBox.Show(e.ExceptionObject.ToString());
 
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
-                System.Diagnostics.Debugger.Break();
+                Debugger.Break();
             }
         }
 

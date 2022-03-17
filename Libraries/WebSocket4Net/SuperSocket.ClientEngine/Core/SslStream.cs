@@ -3,7 +3,11 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Org.BouncyCastle.Crypto.Tls;
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto;
+using Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using WebSocket4Net;
 
 namespace System.Net.Security
 {
@@ -54,12 +58,12 @@ namespace System.Net.Security
         {
             var result = state as AsyncResult;
 
-            m_TlsHandler = new TlsClientProtocol(m_InnerStream, new Org.BouncyCastle.Security.SecureRandom());
-
+            m_TlsHandler = new TlsClientProtocol(m_InnerStream);
+            var crypto = new BcTlsCrypto(new SecureRandom());
             try
             {
 #pragma warning disable 0612,0618
-                m_TlsHandler.Connect(new DefaultTlsClient());
+                m_TlsHandler.Connect(new WebSocketTlsClient(crypto));
 #pragma warning restore 0612,0618
                  
                 m_SecureStream = m_TlsHandler.Stream;

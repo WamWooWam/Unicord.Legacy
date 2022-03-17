@@ -61,7 +61,7 @@ namespace Unicord.WP7.ViewModels
             }
 
             var channels = new ObservableCollection<ChannelViewModel>();
-            foreach (var channel in Discord.PrivateChannels.Values)
+            foreach (var channel in Discord.PrivateChannels.Values.OrderBy(c => c.Recipients[0].Username))
             {
                 if (channel.Type == ChannelType.Private)
                     channels.Add(new ChannelViewModel(channel));

@@ -146,7 +146,8 @@ namespace DiscordLib
         /// <exception cref="NotImplementedException" />
         public bool Contains(T item)
         {
-            throw new NotImplementedException("This method is not implemented. Use .Contains(predicate) instead.");
+            //throw new NotImplementedException("This method is not implemented. Use .Contains(predicate) instead.");
+            return this.InternalBuffer.Contains(item);
         }
 
         /// <summary>

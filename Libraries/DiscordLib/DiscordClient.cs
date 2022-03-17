@@ -20,16 +20,14 @@ namespace DiscordLib
         private Uri _gatewayUrl;
         private ManualResetEvent _connectionLock;
 
-        private ulong _currentUserId;
-
-        internal TaskCompletionSource<object> _connectionSource;
-
+        internal TaskCompletionSource<object> connectionSource;
         internal ConcurrentDictionary<ulong, User> userCache;
         internal RingBuffer<Message> messageCache;
 
         public DiscordRestClient Rest { get; private set; }
         public DiscordSocketClient Socket { get; private set; }
 
+        private ulong _currentUserId;
         public User CurrentUser { get { User u; return _currentUserId != 0 && userCache.TryGetValue(_currentUserId, out u) ? u : null; } }
         public UserSettings UserSettings { get; internal set; }
 
@@ -41,7 +39,7 @@ namespace DiscordLib
         public DiscordClient(string token)
         {
             _connectionLock = new ManualResetEvent(true);
-            _connectionSource = new TaskCompletionSource<object>();
+            connectionSource = new TaskCompletionSource<object>();
 
             userCache = new ConcurrentDictionary<ulong, User>();
             messageCache = new RingBuffer<Message>(250);
@@ -68,7 +66,7 @@ namespace DiscordLib
 
                 Socket.Ready += () =>
                 {
-                    _connectionSource.TrySetResult(null);
+                    connectionSource.TrySetResult(null);
                     return TaskEx.Delay(0);
                 };
 
@@ -76,14 +74,14 @@ namespace DiscordLib
             }
             catch (Exception ex)
             {
-                _connectionSource.TrySetException(ex);
+                connectionSource.TrySetException(ex);
                 throw;
             }
         }
 
         public Task EnsureConnectedAsync()
         {
-            return _connectionSource.Task;
+            return connectionSource.Task;
         }
 
         public Task DisconnectAsync()

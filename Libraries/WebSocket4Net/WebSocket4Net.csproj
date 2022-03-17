@@ -43,6 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="crypto">
+      <HintPath>..\..\Binaries\bccrypto-csharp-1.9.0\crypto.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -186,6 +189,7 @@
     <Compile Include="WebSocketCommandInfo.cs" />
     <Compile Include="WebSocketContext.cs" />
     <Compile Include="WebSocketState.cs" />
+    <Compile Include="WebSocketTlsClient.cs" />
     <Compile Include="WebSocketVersion.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -194,12 +198,6 @@
     <Content Include="SuperSocket.ClientEngine\Core\Core.WP71.csproj" />
     <Content Include="SuperSocket.ClientEngine\Protocol\Protocol.WP71.csproj" />
     <Content Include="SuperSocket.ClientEngine\Proxy\Proxy.WP71.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BouncyCastle.Crypto\BouncyCastle.Crypto.csproj">
-      <Project>{307967BA-F11A-4F72-9EF5-300853075AAB}</Project>
-      <Name>BouncyCastle.Crypto</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

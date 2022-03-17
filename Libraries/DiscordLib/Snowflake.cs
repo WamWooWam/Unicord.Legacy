@@ -10,7 +10,7 @@ namespace DiscordLib
         public virtual ulong Id { get; set; }
 
         [JsonIgnore]
-        public DateTimeOffset CreationTimestamp { get { return new DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMilliseconds(Id >> 22); } }
+        public DateTimeOffset CreationTimestamp { get { return DiscordClient.DiscordEpoch.AddMilliseconds(Id >> 22); } }
 
         public virtual T Update(T other)
         {

@@ -32,6 +32,7 @@ namespace DiscordLib.Net
             _httpClient.DefaultRequestHeaders.Add("User-Agent", userAgent);
             //_httpClient.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
             _httpClient.DefaultRequestHeaders.Add("Keep-Alive", "timeout=600");
+            _httpClient.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
         }
 
         public async Task<RestResponse<T>> SendRequestAsync<T>(RestRequest request)
