@@ -68,7 +68,7 @@ namespace Unicord.WP7
             Dispatcher.BeginInvoke(() => _connectingProgress.IsVisible = false);
         }
 
-        protected ProgressContext GetProgressContext()
+        protected ProgressContext EnterProgressContext()
         {
             return new ProgressContext(this);
         }

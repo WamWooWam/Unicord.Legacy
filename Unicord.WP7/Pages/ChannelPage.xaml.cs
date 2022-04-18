@@ -85,7 +85,7 @@ namespace Unicord.WP7.Pages
         {
             var id = ulong.Parse(NavigationContext.QueryString["id"]);
 
-            using (var context = this.GetProgressContext())
+            using (var context = this.EnterProgressContext())
             {
                 context.ProgressIndicator.IsIndeterminate = true;
                 context.ProgressIndicator.IsVisible = true;
@@ -264,7 +264,7 @@ namespace Unicord.WP7.Pages
                 _didStartLoadingMessages = true;
             }
 
-            using (var context = this.GetProgressContext())
+            using (var context = this.EnterProgressContext())
             {
                 context.ProgressIndicator.IsIndeterminate = true;
                 context.ProgressIndicator.IsVisible = true;
@@ -312,7 +312,7 @@ namespace Unicord.WP7.Pages
                 return;
 
             var fileName = Path.GetFileName(e.OriginalFileName);
-            using (var context = this.GetProgressContext())
+            using (var context = this.EnterProgressContext())
             {
                 var progressIndicator = context.ProgressIndicator;
                 progressIndicator.Text = string.Format("Uploading '{0}'...", fileName);

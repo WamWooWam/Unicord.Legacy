@@ -47,7 +47,7 @@ namespace DiscordLib.Net.Http
         {
             PrepareContent();
 
-            var buffer = new Byte[this.bufferSize];
+            var buffer = new byte[this.bufferSize];
             var progress = new HttpProgress();
             progress.BytesToSend = content.Length;
 

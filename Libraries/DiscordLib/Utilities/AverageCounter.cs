@@ -32,21 +32,28 @@ namespace DiscordLib.Utilities
 
         public double GetAverage()
         {
-            int discard;
-            return GetAverage(out discard);
+            int x;
+            double d, avg;
+            GetAverage(out x, out d, out d, out avg);
+
+            return avg;
         }
 
-        public double GetAverage(out int count)
+        public void GetAverage(out int count, out double min, out double max, out double avg)
         {
             count = Math.Min(sampleCount, samples.Length);
 
             var x = 0.0;
+            min = double.PositiveInfinity;
+            max = double.NegativeInfinity;
             for (int i = 0; i < count; i++)
             {
                 x += samples[i];
+                min = Math.Min(min, samples[i]);
+                max = Math.Max(max, samples[i]);
             }
 
-            return x / count;
+            avg = x / count;
         }
     }
 }

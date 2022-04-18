@@ -220,8 +220,11 @@ namespace DiscordLib
                     _decompressionSavings.GetAverage() * 100,
                     _decompressionTimings.GetAverage());
 
-                Debug.WriteLine("Average dispatch time: {0:N2}ms",
-                    _dispatchTimings.GetAverage());
+                int count;
+                double min, max, avg;
+                _dispatchTimings.GetAverage(out count, out min, out max, out avg);
+
+                Debug.WriteLine("Average dispatch time: {0:N2}ms (min: {1:N2}ms, max: {2:N2}ms, samples: {3})", avg, min, max, count);
             }        
         }
 
