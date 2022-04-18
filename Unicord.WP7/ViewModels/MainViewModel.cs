@@ -84,7 +84,7 @@ namespace Unicord.WP7.ViewModels
             //    DirectMessages = channels;
             //    InvokePropertyChanged("");
             //}, null);
-            return TaskEx.Delay(0);
+            return Task.Delay(0);
         }
 
         public ObservableCollection<GuildViewModel> Guilds { get; set; }
@@ -104,7 +104,7 @@ namespace Unicord.WP7.ViewModels
                     Guilds.Insert(0, new GuildViewModel(e.Guild));
             }, null);
 
-            return TaskEx.Delay(0);
+            return Task.Delay(0);
         }
 
         public void Dispose()

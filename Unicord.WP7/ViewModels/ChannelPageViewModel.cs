@@ -69,7 +69,7 @@ namespace Unicord.WP7.ViewModels
             if (e.Message.ChannelId == channel.Id)
                 syncContext.Post(_ => Messages.Add(new MessageViewModel(e.Message)), null);
 
-            return TaskEx.Delay(0);
+            return Task.Delay(0);
         }
 
         private Task OnMessageDeleted(MessageDeleteEventArgs e)
@@ -77,7 +77,7 @@ namespace Unicord.WP7.ViewModels
             if (e.Message.ChannelId == channel.Id)
                 syncContext.Post(_ => Messages.Remove(Messages.FirstOrDefault(m => m.Id == e.Message.Id)), null);
 
-            return TaskEx.Delay(0);
+            return Task.Delay(0);
         }
     }
 }

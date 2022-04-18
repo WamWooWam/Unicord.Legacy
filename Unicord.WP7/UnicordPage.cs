@@ -60,12 +60,12 @@ namespace Unicord.WP7
 
         private async Task OnConnecting()
         {
-            await Dispatcher.InvokeAsync(() => _connectingProgress.IsVisible = true);
+            Dispatcher.BeginInvoke(() => _connectingProgress.IsVisible = true);
         }
 
         private async Task OnReady()
         {
-            await Dispatcher.InvokeAsync(() => _connectingProgress.IsVisible = false);
+            Dispatcher.BeginInvoke(() => _connectingProgress.IsVisible = false);
         }
 
         protected ProgressContext GetProgressContext()

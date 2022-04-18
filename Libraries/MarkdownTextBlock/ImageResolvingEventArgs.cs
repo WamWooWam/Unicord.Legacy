@@ -58,7 +58,7 @@ namespace System.Windows.Controls.Markdown
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         internal Task WaitForDeferrals()
         {
-            return TaskEx.WhenAll(_deferrals.Select(f => f.Task));
+            return Task.WhenAll(_deferrals.Select(f => f.Task));
         }
     }
 }

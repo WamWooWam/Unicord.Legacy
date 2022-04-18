@@ -40,7 +40,7 @@ namespace Unicord.WP7.ViewModels
             Channels = null;
             RawChannels.Clear();
 
-            TaskEx.Run(() =>
+            Task.Run(() =>
             {
                 var currentMember = _guild.GetCurrentMember();
                 var permissions = _guild.GetDefaultPermissions(currentMember);

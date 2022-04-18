@@ -11,11 +11,12 @@ namespace Unicord.WP7.Behaviours
 {
     public class WatermarkBehaviour : Behavior<TextBox>
     {
-        private bool _hasWatermark;
         private Brush _textBoxForeground;
 
-        public String Text { get; set; }
+        public string Text { get; set; }
         public Brush Foreground { get; set; }
+
+        public bool HasWatermark { get; private set; }
 
         protected override void OnAttached()
         {
@@ -37,7 +38,7 @@ namespace Unicord.WP7.Behaviours
 
         private void GotFocus(object sender, RoutedEventArgs e)
         {
-            if (_hasWatermark)
+            if (HasWatermark)
                 RemoveWatermarkText();
         }
 
@@ -45,14 +46,14 @@ namespace Unicord.WP7.Behaviours
         {
             AssociatedObject.Foreground = _textBoxForeground;
             AssociatedObject.Text = "";
-            _hasWatermark = false;
+            HasWatermark = false;
         }
 
         private void SetWatermarkText()
         {
             AssociatedObject.Foreground = Foreground;
             AssociatedObject.Text = Text;
-            _hasWatermark = true;
+            HasWatermark = true;
         }
 
         protected override void OnDetaching()

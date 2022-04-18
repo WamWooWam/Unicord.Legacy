@@ -1290,7 +1290,7 @@ namespace System.Windows.Controls.Markdown
             }
 
             multiClickDetectionTriggered = true;
-            await Dispatcher.InvokeAsync(() => multiClickDetectionTriggered = false);
+             Dispatcher.BeginInvoke(() => multiClickDetectionTriggered = false);
 
             // Get the hyperlink URL.
             string url = (string)((Hyperlink)sender).CommandParameter.ToString();

@@ -12,8 +12,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WebSocket4Net;
 using DiscordLib.Net.Payloads;
+using TaskEx = System.Threading.Tasks.Task;
+using WebSocket4Net;
 
 namespace DiscordLib
 {

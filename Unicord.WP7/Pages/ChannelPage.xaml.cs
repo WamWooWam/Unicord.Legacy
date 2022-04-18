@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+﻿using DiscordLib.Net.Http;
+using Microsoft;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Unicord.WP7.ViewModels;
-using System.Windows.Input;
-using System.Collections.Specialized;
-using System.Windows.Media;
 using Microsoft.Phone.Tasks;
-using Microsoft;
-using DiscordLib.Net.Http;
-using System.IO;
-using System.Windows.Data;
-using System.Windows.Threading;
-using System.Net.Http;
-using System.IO.IsolatedStorage;
 using Newtonsoft.Json;
-using Unicord.WP7.ViewModels.Cache;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Navigation;
+using System.Windows.Threading;
+using Unicord.WP7.ViewModels;
+using Unicord.WP7.ViewModels.Cache;
 
 namespace Unicord.WP7.Pages
 {
@@ -75,10 +75,9 @@ namespace Unicord.WP7.Pages
             if (!discord.Socket.IsConnected)
             {
                 var id = ulong.Parse(NavigationContext.QueryString["id"]);
-                DataContext = await TaskEx.Run(() => LoadCacheViewModel(id));
+                DataContext = await Task.Run(() => LoadCacheViewModel(id));
                 AutoScroll();
             }
-
             base.OnNavigatedTo(e);
         }
 
@@ -153,7 +152,7 @@ namespace Unicord.WP7.Pages
 
         private void OnAutoSaveTimerTick(object sender, EventArgs e)
         {
-            var background = TaskEx.Run(() => UpdateViewModelCache());
+            var background = Task.Run(() => UpdateViewModelCache());
         }
 
         private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
@@ -283,6 +282,9 @@ namespace Unicord.WP7.Pages
 
         private async void SendButton_Click(object sender, EventArgs e)
         {
+            if (MessageTextBoxWatermark.HasWatermark)
+                return;
+
             var text = MessageTextBox.Text;
             MessageTextBox.Text = "";
 

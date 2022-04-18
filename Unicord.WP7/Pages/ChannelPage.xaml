@@ -254,7 +254,7 @@
                 <Grid Margin="0" Background="{StaticResource PhoneSubtleBrush}" Grid.Row="0" Grid.Column="1">
                     <TextBox x:Name="MessageTextBox" Style="{StaticResource InlineTextBoxStyle}" InputScope="Chat" AcceptsReturn="True" TextWrapping="Wrap" Foreground="White" Padding="10">
                         <interactivity:Interaction.Behaviors>
-                            <behaviours:WatermarkBehaviour Text="Send a message..." Foreground="LightGray" />
+                            <behaviours:WatermarkBehaviour x:Name="MessageTextBoxWatermark" Text="Send a message..." Foreground="LightGray" />
                         </interactivity:Interaction.Behaviors>
                     </TextBox>
                 </Grid>
