@@ -22,8 +22,8 @@
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <FileUpgradeFlags>0</FileUpgradeFlags>
-    <UpgradeBackupLocation>C:\Users\wamwo\Documents\GitHub\Unicord.Legacy\Backup3\</UpgradeBackupLocation>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>C:\Users\wamwo\Documents\GitHub\Unicord.Legacy\Backup2\</UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <PublishUrl>publish\</PublishUrl>

@@ -80,7 +80,7 @@ namespace DiscordLib.Net
             return new RestResponse<string>((int)httpResponseMessage.StatusCode, httpResponseMessage.ReasonPhrase, content);
         }
 
-        private static async Task<T> DeserializeFromStreamAsync<T>(Stream str)
+        internal static async Task<T> DeserializeFromStreamAsync<T>(Stream str)
         {
             using (var reader = new StreamReader(str))
             using (var jsonReader = new JsonTextReader(reader))

@@ -28,6 +28,8 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <DefaultLanguage>en-US</DefaultLanguage>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -95,6 +97,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Compression, Version=3.9.85.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Compression.3.9.85\lib\wp8\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\sl4-windowsphone71\System.Net.Http.dll</HintPath>
       <Private>True</Private>
@@ -129,6 +135,7 @@
     <Compile Include="Net\JsonRestRequest.cs" />
     <Compile Include="Net\DiscordApiException.cs" />
     <Compile Include="Net\MultipartRestRequest.cs" />
+    <Compile Include="Net\PayloadDecompressor.cs" />
     <Compile Include="Net\Payloads\GatewayPayload.cs" />
     <Compile Include="Net\Payloads\HelloPayload.cs" />
     <Compile Include="Net\Payloads\IdentifyPayload.cs" />
@@ -153,6 +160,7 @@
     <Compile Include="User.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="Utilities\AsyncEvent.cs" />
+    <Compile Include="Utilities\AverageCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -176,8 +184,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Compression.3.9.85\build\wp8\Microsoft.Bcl.Compression.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Compression.3.9.85\build\wp8\Microsoft.Bcl.Compression.targets'))" />
   </Target>
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\..\packages\Microsoft.Bcl.Compression.3.9.85\build\wp8\Microsoft.Bcl.Compression.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Compression.3.9.85\build\wp8\Microsoft.Bcl.Compression.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

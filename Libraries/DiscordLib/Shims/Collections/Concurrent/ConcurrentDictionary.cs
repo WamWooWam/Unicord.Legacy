@@ -441,8 +441,8 @@ namespace System.Collections.Concurrent
 
                             if (prev == null)
                             {
-                                //Volatile.Write<Node>(ref tables.m_buckets[bucketNo], curr.m_next);
-                                tables.m_buckets[bucketNo] = curr.m_next;
+                                Volatile.Write<Node>(ref tables.m_buckets[bucketNo], curr.m_next);
+                                //tables.m_buckets[bucketNo] = curr.m_next;
                             }
                             else
                             {
@@ -489,9 +489,8 @@ namespace System.Collections.Concurrent
 
             // We can get away w/out a lock here.
             // The Volatile.Read ensures that the load of the fields of 'n' doesn't move before the load from buckets[i].
-            //Node n = Volatile.Read<Node>(ref tables.m_buckets[bucketNo]);
-            Node n = tables.m_buckets[bucketNo];
-
+            Node n = Volatile.Read<Node>(ref tables.m_buckets[bucketNo]);
+            // Node n = tables.m_buckets[bucketNo];
             while (n != null)
             {
                 if (comparer.Equals(n.m_key, key))
@@ -766,8 +765,8 @@ namespace System.Collections.Concurrent
             for (int i = 0; i < buckets.Length; i++)
             {
                 // The Volatile.Read ensures that the load of the fields of 'current' doesn't move before the load from buckets[i].
-                // Node current = Volatile.Read<Node>(ref buckets[i]);
-                Node current = buckets[i];
+                Node current = Volatile.Read<Node>(ref buckets[i]);
+                //Node current = buckets[i];
 
                 while (current != null)
                 {
@@ -869,8 +868,8 @@ namespace System.Collections.Concurrent
 #endif
 
                     // The key was not found in the bucket. Insert the key-value pair.
-                    //Volatile.Write<Node>(ref tables.m_buckets[bucketNo], new Node(key, value, hashcode, tables.m_buckets[bucketNo]));
-                    tables.m_buckets[bucketNo] = new Node(key, value, hashcode, tables.m_buckets[bucketNo]);
+                    Volatile.Write<Node>(ref tables.m_buckets[bucketNo], new Node(key, value, hashcode, tables.m_buckets[bucketNo]));
+                    // tables.m_buckets[bucketNo] = new Node(key, value, hashcode, tables.m_buckets[bucketNo]);
                     checked
                     {
                         tables.m_countPerLock[lockNo]++;

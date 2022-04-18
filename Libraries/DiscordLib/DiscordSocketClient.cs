@@ -13,8 +13,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordLib.Net.Payloads;
-using TaskEx = System.Threading.Tasks.Task;
 using WebSocket4Net;
+using DiscordLib.Net.WebSocket;
+using System.IO;
 
 namespace DiscordLib
 {
@@ -41,7 +42,12 @@ namespace DiscordLib
         private ConcurrentQueue<Func<Task>> _taskQueue;
 
         private WebSocket _webSocket;
+        private PayloadDecompressor _decompressor;
         private TaskCompletionSource<object> _tcs;
+
+        private AverageCounter _decompressionSavings;
+        private AverageCounter _decompressionTimings;
+        private AverageCounter _dispatchTimings;
 
         public bool IsConnected { get; set; }
 
@@ -50,6 +56,12 @@ namespace DiscordLib
             _client = client;
             _token = token;
             _taskQueue = new ConcurrentQueue<Func<Task>>();
+
+            _decompressor = new PayloadDecompressor(GatewayCompressionLevel.Stream);
+
+            _decompressionSavings = new AverageCounter(250);
+            _decompressionTimings = new AverageCounter(250);
+            _dispatchTimings = new AverageCounter(250);
         }
 
         internal async Task ConnectAsync(Uri gatewayUri)
@@ -58,11 +70,11 @@ namespace DiscordLib
             _tcs = new TaskCompletionSource<object>();
 
             var uri = new UriBuilder(gatewayUri);
-            uri.Query = "v=9&encoding=json";
+            uri.Query = "v=9&encoding=json&compress=zlib-stream";
 
             _webSocket = new WebSocket(uri.ToString());
             _webSocket.Opened += OnSocketOpened;
-            _webSocket.MessageReceived += OnSocketMessage;
+            _webSocket.DataReceived += OnSocketData;
             _webSocket.Error += OnSocketError;
             _webSocket.Closed += OnSocketClosed;
             _webSocket.Open();
@@ -80,7 +92,7 @@ namespace DiscordLib
             _webSocket.Close(1000, null);
             _webSocket.Dispose();
 
-            return TaskEx.Delay(0);
+            return Task.Delay(0);
         }
 
         private void OnSocketOpened(object sender, System.EventArgs e)
@@ -88,9 +100,9 @@ namespace DiscordLib
             _tcs.TrySetResult(null);
         }
 
-        private void OnSocketMessage(object sender, MessageReceivedEventArgs e)
+        private void OnSocketData(object sender, DataReceivedEventArgs e)
         {
-            QueueTask(async () => await HandleSocketMessageAsync(e.Message));
+            QueueTask(async () => await DecompressSocketMessageAsync(e.Data));
         }
 
         private async void OnSocketClosed(object sender, System.EventArgs e)
@@ -108,7 +120,7 @@ namespace DiscordLib
             _tcs.TrySetCanceled();
             _heartbeatCancellation.Cancel();
             if (_gatewayUri != null)
-                 await ConnectAsync(_gatewayUri);
+                await ConnectAsync(_gatewayUri);
         }
 
         private void OnSocketError(object sender, ErrorEventArgs e)
@@ -117,46 +129,54 @@ namespace DiscordLib
             Debug.WriteLine(e.Exception);
         }
 
-        private async Task HandleSocketMessageAsync(string message)
-        {            
-#if DEBUG
-            Debug.WriteLine("v {0}", message.Length > 256 ? message.Substring(0, 256) : message);
-#endif
-
-            var payload = JsonConvert.DeserializeObject<GatewayPayload>(message);
-            switch (payload.OpCode)
+        private async Task DecompressSocketMessageAsync(byte[] data)
+        {
+            var watch = Stopwatch.StartNew();
+            using (var stream = new MemoryStream())
             {
-                case GatewayOpCode.Dispatch:
-                    await HandleDispatchAsync(message, payload);
-                    break;
-                case GatewayOpCode.Heartbeat:
-                    break;
-                case GatewayOpCode.Reconnect:
-                    break;
-                case GatewayOpCode.InvalidSession:
-                    await HandleInvalidSessionAsync();
-                    break;
-                case GatewayOpCode.Hello:
-                    await HandleHelloAsync(JsonConvert.DeserializeObject<GatewayPayload<HelloPayload>>(message));
-                    break;
-                case GatewayOpCode.HeartbeatAck:
-                    await HandleHeartbeatAckAsync();
-                    break;
-                default:
-                    break;
+                if (!_decompressor.TryDecompress(data, stream))
+                    return;
+
+                _decompressionSavings.SubmitSample((double)(stream.Length - data.Length) / stream.Length);
+                _decompressionTimings.SubmitSample(watch.Elapsed.TotalMilliseconds);
+                watch.Restart();
+
+                stream.Position = 0;
+                var payload = await RestClient.DeserializeFromStreamAsync<GatewayPayload>(stream);
+                switch (payload.OpCode)
+                {
+                    case GatewayOpCode.Dispatch:
+                        await HandleDispatchAsync(payload);
+                        break;
+                    case GatewayOpCode.Heartbeat:
+                        break;
+                    case GatewayOpCode.Reconnect:
+                        break;
+                    case GatewayOpCode.InvalidSession:
+                        await HandleInvalidSessionAsync();
+                        break;
+                    case GatewayOpCode.Hello:
+                        await HandleHelloAsync(payload.Data.ToObject<HelloPayload>());
+                        break;
+                    case GatewayOpCode.HeartbeatAck:
+                        await HandleHeartbeatAckAsync();
+                        break;
+                    default:
+                        break;
+                }
+                
+                _dispatchTimings.SubmitSample(watch.Elapsed.TotalMilliseconds);
             }
         }
-
-        private async Task HandleHelloAsync(GatewayPayload<HelloPayload> payload)
+        
+        private async Task HandleHelloAsync(HelloPayload helloPayload)
         {
-            var helloPayload = payload.Data;
-
             if (_heartbeatCancellation != null && !_heartbeatCancellation.IsCancellationRequested)
                 _heartbeatCancellation.Cancel();
 
             _heartbeatCancellation = new CancellationTokenSource();
             _heartbeatInterval = helloPayload.HeartbeatInterval;
-            _heartbeatTask = TaskEx.Run(new Func<Task>(HeartbeatAsync));
+            _heartbeatTask = Task.Run(new Func<Task>(HeartbeatAsync));
 
             if (_sessionId == null)
             {
@@ -184,7 +204,7 @@ namespace DiscordLib
         {
             _sessionId = null;
 
-            await TaskEx.Delay(new Random().Next(1000, 5000)); // yes this is what you're meant to do lol
+            await Task.Delay(new Random().Next(1000, 5000)); // yes this is what you're meant to do lol
             await IdentifyAsync();
         }
 
@@ -194,30 +214,39 @@ namespace DiscordLib
             while (!token.IsCancellationRequested)
             {
                 await SendHeartbeatAsync();
-                await TaskEx.Delay(_heartbeatInterval);
-            }
+                await Task.Delay(_heartbeatInterval);
+
+                Debug.WriteLine("Average compression savings: {0:N2}%, {1:N2}ms",
+                    _decompressionSavings.GetAverage() * 100,
+                    _decompressionTimings.GetAverage());
+
+                Debug.WriteLine("Average dispatch time: {0:N2}ms",
+                    _dispatchTimings.GetAverage());
+            }        
         }
 
-        private async Task HandleDispatchAsync(string message, GatewayPayload payload)
+        private async Task HandleDispatchAsync(GatewayPayload payload)
         {
             _seq = payload.Sequence;
+
+            Debug.WriteLine("Got event: {0}", payload.EventName);
 
             switch (payload.EventName.ToLowerInvariant())
             {
                 case "ready":
-                    await HandleReadyAsync(JsonConvert.DeserializeObject<GatewayPayload<ReadyPayload>>(message));
+                    await HandleReadyAsync(new GatewayPayload<ReadyPayload>(payload));
                     break;
                 case "resumed":
-                    await HandleResumedAsync(JsonConvert.DeserializeObject<GatewayPayload<object>>(message));
+                    await HandleResumedAsync(new GatewayPayload<object>(payload));
                     break;
                 case "guild_create":
-                    await HandleGuildCreateAsync(JsonConvert.DeserializeObject<GatewayPayload<Guild>>(message));
+                    await HandleGuildCreateAsync(new GatewayPayload<Guild>(payload));
                     break;
                 case "message_create":
-                    await HandleMessageCreateAsync(JsonConvert.DeserializeObject<GatewayPayload<Message>>(message));
+                    await HandleMessageCreateAsync(new GatewayPayload<Message>(payload));
                     break;
                 case "message_delete":
-                    await HandleMessageDeleteAsync(JsonConvert.DeserializeObject<GatewayPayload<MessageDeletePayload>>(message));
+                    await HandleMessageDeleteAsync(new GatewayPayload<MessageDeletePayload>(payload));
                     break;
                 default:
                     break;
@@ -316,7 +345,7 @@ namespace DiscordLib
 
             Debug.WriteLine("Got heartbeat ack in {0}ms!", ping);
 
-            return TaskEx.Delay(0);
+            return Task.Delay(0);
         }
 
         private void QueueTask(Func<Task> task)
@@ -353,7 +382,7 @@ namespace DiscordLib
         private Task SendAsync(string message)
         {
             Debug.WriteLine("^ {0}", message);
-            return TaskEx.Run(() => _webSocket.Send(message));
+            return Task.Run(() => _webSocket.Send(message));
         }
 
         private static void OnError(string arg1, Exception arg2)

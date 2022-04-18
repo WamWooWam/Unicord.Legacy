@@ -11,8 +11,8 @@ namespace DiscordLib.Net.Payloads
     {
         [JsonProperty("op")]
         public GatewayOpCode OpCode { get; internal set; }
-        //[JsonProperty("d")]
-        //public JToken Data { get; internal set; }
+        [JsonProperty("d")]
+        public JToken Data { get; internal set; }
         [JsonProperty("s", NullValueHandling = NullValueHandling.Ignore)]
         public int? Sequence { get; internal set; }
         [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
@@ -31,11 +31,25 @@ namespace DiscordLib.Net.Payloads
         }
     }
 
-    internal class GatewayPayload<T> : GatewayPayload
+    internal class GatewayPayload<T>
     {
+        public GatewayPayload() { }
+        public GatewayPayload(GatewayPayload source)
+        {
+            OpCode = source.OpCode;
+            Sequence = source.Sequence;
+            EventName = source.EventName;
+            Data = source.Data.ToObject<T>();
+        }
+
+        [JsonProperty("op")]
+        public GatewayOpCode OpCode { get; internal set; }
         [JsonProperty("d")]
         public T Data { get; internal set; }
-
+        [JsonProperty("s", NullValueHandling = NullValueHandling.Ignore)]
+        public int? Sequence { get; internal set; }
+        [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
+        public string EventName { get; internal set; }
     }
 
     /// <summary>
